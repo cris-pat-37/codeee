@@ -1,0 +1,129 @@
+{
+  "kind": "collectionType",
+  "collectionName": "properties",
+  "info": {
+    "singularName": "property",
+    "pluralName": "properties",
+    "displayName": "Property",
+    "description": "Property listing details"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "price": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "string",
+      "required": true
+    },
+    "shortDescription": {
+      "type": "text"
+    },
+    "longDescription": {
+      "type": "richtext"
+    },
+    "propertyType": {
+      "type": "enumeration",
+      "enum": [
+        "Apartment",
+        "Villa",
+        "Plot",
+        "Commercial"
+      ],
+      "default": "Apartment"
+    },
+    "bedrooms": {
+      "type": "integer"
+    },
+    "bathrooms": {
+      "type": "integer"
+    },
+    "area": {
+      "type": "string"
+    },
+    "projectStatus": {
+      "type": "string",
+      "default": "Under Construction"
+    },
+    "possessionDate": {
+      "type": "string"
+    },
+    "builderName": {
+      "type": "string"
+    },
+    "reraNumber": {
+      "type": "string"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "latitude": {
+      "type": "decimal"
+    },
+    "longitude": {
+      "type": "decimal"
+    },
+    "youtubeVideo": {
+      "type": "string"
+    },
+    "brochurePDF": {
+      "type": "media",
+      "multiple": false,
+      "required": false
+    },
+    "brochureUrl": {
+      "type": "string"
+    },
+    "mainImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "mainImageUrl": {
+      "type": "string"
+    },
+    "galleryImages": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "galleryImageUrls": {
+      "type": "json"
+    },
+    "amenities": {
+      "type": "json"
+    },
+    "nearbyPlaces": {
+      "type": "json"
+    },
+    "floorPlans": {
+      "type": "json"
+    },
+    "seoTitle": {
+      "type": "string"
+    },
+    "seoDescription": {
+      "type": "text"
+    }
+  }
+}

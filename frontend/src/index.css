@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Outfit", sans-serif;
+  
+  /* Map both amber and teal to original website's Brand Teal (#1ea69a) colors */
+  --color-amber-50: #e4f6f4;
+  --color-amber-100: #cdece9;
+  --color-amber-200: #9cdad3;
+  --color-amber-300: #6ac7bd;
+  --color-amber-400: #39b5a6;
+  --color-amber-500: #1ea69a;
+  --color-amber-600: #18857b;
+  --color-amber-700: #12645c;
+  --color-amber-800: #0c433d;
+  --color-amber-900: #06211e;
+
+  --color-teal-50: #e4f6f4;
+  --color-teal-100: #cdece9;
+  --color-teal-200: #9cdad3;
+  --color-teal-300: #6ac7bd;
+  --color-teal-400: #39b5a6;
+  --color-teal-500: #1ea69a;
+  --color-teal-600: #18857b;
+  --color-teal-700: #12645c;
+}
+
+:root {
+  font-family: var(--font-sans);
+  background-color: #f7f7f7; /* Light gray page background */
+  color: #1e293b; /* Charcoal text color */
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Leaflet Map Custom Styling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
+  z-index: 10;
+  background: #e2e8f0;
+}
+
+/* Light Glassmorphism Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+}
+
+.glass-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+}
+
+/* Hover effects */
+.hover-gold-glow {
+  transition: all 0.3s ease;
+}
+.hover-gold-glow:hover {
+  box-shadow: 0 0 15px rgba(30, 166, 154, 0.2);
+  border-color: rgba(30, 166, 154, 0.4);
+}
+
+/* Hide Swiper buttons outline */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #1ea69a !important;
+}
+.swiper-pagination-bullet-active {
+  background: #1ea69a !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Custom styling for WordPress-looking cards and elements */
+.wp-card-shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.12);
+}
+
+.wp-card-shadow:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.07), 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* WordPress-style typography settings */
+.wp-heading {
+  font-family: var(--font-display);
+  color: #333333;
+}
+
+.wp-text {
+  color: #666666;
+}
+
+.wp-accent-teal {
+  color: #1ea69a;
+}
+

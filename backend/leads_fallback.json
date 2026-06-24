@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Sunny",
+    "phone": "+91 98765 43210",
+    "email": "sunny@example.com",
+    "message": "I want to tour this property",
+    "propertySlug": "ajmera-marina",
+    "propertyName": "Ajmera Marina",
+    "createdAt": "2026-06-23T16:31:34.302Z"
+  },
+  {
+    "name": "John",
+    "phone": "+91 99999 88888",
+    "email": "john@example.com",
+    "message": "Looking for a 3BHK unit",
+    "propertySlug": "ajmera-marina",
+    "propertyName": "Ajmera Marina",
+    "createdAt": "2026-06-23T16:33:27.241Z"
+  }
+]
