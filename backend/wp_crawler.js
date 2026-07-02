@@ -2,13 +2,16 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const WP_URL = 'https://tirumakudaluproperties.com';
-const USERNAME = 'naveen@codegres.com';
-const PASSWORD = '!g%$8L0oF5N6ZWLw2CQXN@cs';
+const WP_URL = process.env.WP_URL || 'https://tirumakudaluproperties.com';
+const USERNAME = process.env.WP_CRAWLER_USER || 'naveen@codegres.com';
+const PASSWORD = process.env.WP_CRAWLER_PASSWORD || '';
 
 async function crawl() {
   try {

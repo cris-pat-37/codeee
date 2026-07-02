@@ -124,6 +124,21 @@
     },
     "seoDescription": {
       "type": "text"
+    },
+    "furnishing": {
+      "type": "string"
+    },
+    "parking": {
+      "type": "string"
+    },
+    "configuration": {
+      "type": "text"
+    },
+    "specialFeatures": {
+      "type": "text"
+    },
+    "additionalDetails": {
+      "type": "json"
     }
   }
 }

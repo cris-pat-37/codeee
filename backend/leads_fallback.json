@@ -16,5 +16,32 @@
     "propertySlug": "ajmera-marina",
     "propertyName": "Ajmera Marina",
     "createdAt": "2026-06-23T16:33:27.241Z"
+  },
+  {
+    "name": "VISHWAPATHI ARAVINDH",
+    "phone": "09030706558",
+    "email": "vishwaphathiaravindh@gmail.com",
+    "message": "Hello, I would like to enquire about properties. Please contact me.",
+    "propertySlug": "home-sidebar-enquiry",
+    "propertyName": "Homepage Sidebar Contact Widget",
+    "createdAt": "2026-06-29T04:47:35.252Z"
+  },
+  {
+    "name": "MCA GAMERS",
+    "phone": "+919030706558",
+    "email": "vishwaphathiaravindh@gmail.com",
+    "message": "Hello, I am interested in this property. Please share more details.",
+    "propertySlug": "ajmeera-marina",
+    "propertyName": "Ajmeera Marina",
+    "createdAt": "2026-06-30T10:56:15.707Z"
+  },
+  {
+    "name": "VISHWAPATHI ARAVINDH",
+    "phone": "+919030706558",
+    "email": "vishwaphathiaravindh@gmail.com",
+    "message": "Downloaded Brochure for Ivory Terraces.",
+    "propertySlug": "ivory-terraces",
+    "propertyName": "Ivory Terraces",
+    "createdAt": "2026-07-01T18:56:37.358Z"
   }
 ]

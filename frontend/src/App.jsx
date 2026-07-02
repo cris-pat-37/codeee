@@ -8,7 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 function Logo() {
   return (
     <img 
-      src="https://tirumakudaluproperties.com/wp-content/uploads/2026/05/Company_Logo1-removebg-preview_1_cropped_70.png" 
+      src="/logo.png" 
       alt="Tirumakudalu Properties Logo" 
       className="h-[55px] md:h-[65px] w-auto object-contain"
     />

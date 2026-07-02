@@ -47,8 +47,8 @@ module.exports = {
           price: 'Include scale unit, e.g. "1.69 Crores" or "85 Lakhs"',
           reraNumber: 'RERA Registration Number (leave blank if not applicable)',
           possessionDate: 'Expected completion date, e.g. "Dec 2027" or "Ready to Move"',
-          latitude: 'Decimal format for Leaflet Map centering, e.g. 12.9716',
-          longitude: 'Decimal format for Leaflet Map centering, e.g. 77.5946',
+          latitude: 'Optional. Leave blank to automatically resolve from Location field, e.g. 12.9716',
+          longitude: 'Optional. Leave blank to automatically resolve from Location field, e.g. 77.5946',
           youtubeVideo: 'YouTube Video link for virtual tour, e.g. https://www.youtube.com/watch?v=...',
           brochureUrl: 'Direct HTTP link to the PDF brochure, if not uploading directly',
           mainImageUrl: 'External WordPress upload path, e.g. https://tirumakudaluproperties.com/wp-content/uploads/...'

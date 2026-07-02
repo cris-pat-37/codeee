@@ -8,12 +8,12 @@ import L from 'leaflet';
 import { api } from '../services/api';
 import { PropertyDetailSkeleton } from '../components/SkeletonLoader';
 
-// Icons
 import { 
   BiBed, BiBath, BiArea, BiBuilding, BiCalendar, BiUser,
   BiPhoneCall, BiEnvelope, BiMessageDetail, BiDownload,
   BiMapPin, BiShareAlt, BiHeart, BiPlayCircle, BiX,
-  BiCheckCircle, BiLoaderAlt, BiChevronLeft, BiChevronRight
+  BiCheckCircle, BiLoaderAlt, BiChevronLeft, BiChevronRight,
+  BiCar
 } from 'react-icons/bi';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -24,6 +24,100 @@ import 'swiper/css/pagination';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
+  
+  const formatStartingPrice = (priceStr) => {
+    if (!priceStr) return '';
+    if (priceStr.toLowerCase().includes('request')) return 'Price on Request';
+    const cleanStr = priceStr.replace(/–/g, '-');
+    let startPart = '';
+    if (cleanStr.includes('-')) {
+      const parts = cleanStr.split('-');
+      startPart = parts[0].trim();
+      const unitMatch = cleanStr.match(/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i);
+      const unit = unitMatch ? unitMatch[0] : '';
+      const hasUnit = /(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart);
+      if (!hasUnit && unit) {
+        startPart = `${startPart} ${unit}`;
+      }
+    } else {
+      startPart = cleanStr.trim();
+    }
+    
+    // Remove existing "+", "Onwards", and trailing/leading spaces
+    startPart = startPart.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
+    
+    if (/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart)) {
+      return `${startPart} Onwards`;
+    }
+    return startPart;
+  };
+
+  const formatStartingArea = (areaStr) => {
+    if (!areaStr) return '';
+    const cleanStr = areaStr.replace(/–/g, '-');
+    if (cleanStr.includes('-')) {
+      const parts = cleanStr.split('-');
+      let startPart = parts[0].trim();
+      const unitMatch = cleanStr.match(/(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i);
+      const unit = unitMatch ? unitMatch[0] : 'Sq.ft';
+      const hasUnit = /(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i.test(startPart);
+      if (!hasUnit) {
+        startPart = `${startPart} ${unit}`;
+      }
+      startPart = startPart.replace(/\+$/, '').trim();
+      return startPart;
+    }
+    if (areaStr.endsWith('+')) {
+      return areaStr.slice(0, -1).trim();
+    }
+    return areaStr;
+  };
+
+  const getExactAreaForBhk = (prop) => {
+    if (!prop) return '';
+    const areaStr = prop.area || '';
+    const bedrooms = prop.bedrooms;
+    
+    if (!areaStr.includes('-')) {
+      return areaStr;
+    }
+    
+    const desc = prop.longDescription || '';
+    if (desc && bedrooms) {
+      const regex = new RegExp(`<td[^>]*>\\s*${bedrooms}\\s*BHK\\s*<\\/td>\\s*<td[^>]*>([^<]+)<\\/td>`, 'i');
+      const match = desc.match(regex);
+      if (match) {
+        const bhkArea = match[1].trim();
+        return formatStartingArea(bhkArea);
+      }
+    }
+    
+    return formatStartingArea(areaStr);
+  };
+
+  const formatHtmlRanges = (html) => {
+    if (!html) return '';
+    let cleanHtml = html;
+    
+    // Replace price ranges
+    cleanHtml = cleanHtml.replace(/(?:₹|Rs\.?)\s*(\d+(?:\.\d+)?)\s*(Cr|Crores|Lakhs|Lakh)?\s*-\s*(\d+(?:\.\d+)?)\s*(Cr|Crores|Lakhs|Lakh)?/gi, (match, p1, u1, p2, u2) => {
+      const unit = u1 || u2 || '';
+      return `₹${p1} ${unit} Onwards`;
+    });
+    
+    // Replace area ranges
+    cleanHtml = cleanHtml.replace(/(\d+(?:\.\d+)?)\s*(Sq\.?ft|sqft|square\s*feet)?\s*-\s*(\d+(?:\.\d+)?)\s*(Sq\.?ft|sqft|square\s*feet)/gi, (match, a1, u1, a2, u2) => {
+      const unit = u1 || u2 || 'Sq.ft';
+      return `${a1} ${unit}`;
+    });
+    
+    return cleanHtml;
+  };
+
+  const capitalizeWords = (str) => {
+    if (!str) return '';
+    return str.replace(/\b\w/g, c => c.toUpperCase());
+  };
   const [property, setProperty] = useState(null);
   const [similarProperties, setSimilarProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +140,64 @@ export default function PropertyDetail() {
   const [activeFloorPlanIndex, setActiveFloorPlanIndex] = useState(0);
   const [floorPlanLightboxOpen, setFloorPlanLightboxOpen] = useState(false);
   const [enquireModalOpen, setEnquireModalOpen] = useState(false);
+
+  // Brochure Gated Form States
+  const [brochureModalOpen, setBrochureModalOpen] = useState(false);
+  const [brochureFormData, setBrochureFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+  });
+  const [brochureSubmitting, setBrochureSubmitting] = useState(false);
+  const [brochureSuccess, setBrochureSuccess] = useState(null);
+  const [brochureError, setBrochureError] = useState(null);
+
+  const handleBrochureInputChange = (e) => {
+    setBrochureFormData({ ...brochureFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleBrochureSubmit = async (e) => {
+    e.preventDefault();
+    setBrochureSubmitting(true);
+    setBrochureSuccess(null);
+    setBrochureError(null);
+
+    const leadPayload = {
+      ...brochureFormData,
+      message: `Downloaded Brochure for ${property?.title || 'this property'}.`,
+      propertySlug: slug,
+      propertyName: property?.title || 'Unknown Property'
+    };
+
+    try {
+      await api.submitLead(leadPayload);
+      setBrochureSuccess('Thank you! Your download is starting.');
+      
+      // Trigger actual download of brochure
+      if (!property?.brochureUrl) {
+        alert('Brochure file is being generated. An agent will send it over WhatsApp shortly.');
+      } else {
+        const link = document.createElement('a');
+        link.href = property.brochureUrl;
+        link.target = '_blank';
+        link.download = `${property.title.replace(/\s+/g, '_')}_Brochure.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      setTimeout(() => {
+        setBrochureModalOpen(false);
+        setBrochureSuccess(null);
+        setBrochureFormData({ name: '', phone: '', email: '' });
+      }, 3000);
+    } catch (err) {
+      console.error('Brochure submit error:', err);
+      setBrochureError(err.message || 'Failed to process request. Please try again.');
+    } finally {
+      setBrochureSubmitting(false);
+    }
+  };
 
   // Map ref
   const mapRef = useRef(null);
@@ -94,47 +246,73 @@ export default function PropertyDetail() {
   // Leaflet Map Initialization
   useEffect(() => {
     if (!loading && property && document.getElementById('map-container')) {
-      const lat = parseFloat(property.latitude) || 12.9716;
-      const lng = parseFloat(property.longitude) || 77.5946;
+      const initializeMap = (mapLat, mapLng) => {
+        if (mapRef.current) {
+          mapRef.current.remove();
+        }
 
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
+        const map = L.map('map-container', {
+          zoomControl: true,
+          scrollWheelZoom: false
+        }).setView([mapLat, mapLng], 15);
 
-      const map = L.map('map-container', {
-        zoomControl: true,
-        scrollWheelZoom: false
-      }).setView([lat, lng], 15);
+        mapRef.current = map;
 
-      mapRef.current = map;
+        // CartoDB Voyager light tiles fit the light theme perfectly
+        L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 20
+        }).addTo(map);
 
-      // CartoDB Voyager light tiles fit the light theme perfectly
-      L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
-      }).addTo(map);
-
-      const tealMarkerHtml = `
-        <div class="relative flex items-center justify-center">
-          <div class="absolute w-10 h-10 bg-teal-500/30 rounded-full animate-ping"></div>
-          <div class="relative w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center shadow-md">
-            <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+        const tealMarkerHtml = `
+          <div class="relative flex items-center justify-center">
+            <div class="absolute w-10 h-10 bg-teal-500/30 rounded-full animate-ping"></div>
+            <div class="relative w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center shadow-md">
+              <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
 
-      const customIcon = L.divIcon({
-        html: tealMarkerHtml,
-        className: 'custom-map-marker',
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
-      });
+        const customIcon = L.divIcon({
+          html: tealMarkerHtml,
+          className: 'custom-map-marker',
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
+        });
 
-      L.marker([lat, lng], { icon: customIcon })
-        .addTo(map)
-        .bindPopup(`<div class="text-slate-800 font-sans font-semibold p-1">${property.title}</div>`)
-        .openPopup();
+        L.marker([mapLat, mapLng], { icon: customIcon })
+          .addTo(map)
+          .bindPopup(`<div class="text-slate-800 font-sans font-semibold p-1">${property.title}</div>`)
+          .openPopup();
+      };
+
+      const lat = parseFloat(property.latitude);
+      const lng = parseFloat(property.longitude);
+
+      if (lat && lng && lat !== 0 && lng !== 0) {
+        initializeMap(lat, lng);
+      } else {
+        // Geocode location using Nominatim
+        const query = `${property.location || 'Bangalore'}, Karnataka, India`;
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              const geocodedLat = parseFloat(data[0].lat);
+              const geocodedLng = parseFloat(data[0].lon);
+              initializeMap(geocodedLat, geocodedLng);
+            } else {
+              // Fallback to default Bangalore coordinates
+              initializeMap(12.9716, 77.5946);
+            }
+          })
+          .catch(err => {
+            console.error("OSM Nominatim Geocoding failed:", err);
+            // Fallback to default Bangalore coordinates
+            initializeMap(12.9716, 77.5946);
+          });
+      }
     }
 
     return () => {
@@ -205,16 +383,21 @@ export default function PropertyDetail() {
   const title = property?.title || 'Property Detail';
   
   // Field values with prefilled demo data resolve
-  const fPrice = resolveField(property?.price, '1.69 Crores');
+  const formattedPrice = formatStartingPrice(property?.price);
+  const formattedArea = getExactAreaForBhk(property);
+
+  const fPrice = resolveField(formattedPrice, '1.69 Crores');
   const fLocation = resolveField(property?.location, 'Kempanahalli, Bangalore');
   const fBedrooms = resolveField(property?.bedrooms, '3');
   const fBathrooms = resolveField(property?.bathrooms, '3');
-  const fArea = resolveField(property?.area, '1600 Sqft');
+  const fArea = resolveField(formattedArea, '1600 Sqft');
   const fPropertyType = resolveField(property?.propertyType, 'Apartment');
   const fPossessionDate = resolveField(property?.possessionDate, 'Dec 2027');
   const fBuilderName = resolveField(property?.builderName, 'Tirumakudalu Properties');
   const fReraNumber = resolveField(property?.reraNumber, 'PRM/KA/RERA/1251/310/PR/180627/003456');
   const fProjectStatus = resolveField(property?.projectStatus, 'Under Construction');
+  const fFurnishing = resolveField(property?.furnishing ? capitalizeWords(property.furnishing) : null, 'Unfurnished');
+  const fParking = resolveField(property?.parking ? capitalizeWords(property.parking) : null, '4-Wheeler Parking');
 
   const youtubeVideo = property?.youtubeVideo || 'https://www.youtube.com/watch?v=ScMzIvxBSi4';
   const youtubeVideoId = youtubeVideo.split('v=')[1]?.split('&')[0] || youtubeVideo.split('/').pop() || 'ScMzIvxBSi4';
@@ -224,14 +407,14 @@ export default function PropertyDetail() {
   if (property?.mainImage?.data) {
     mainImageUrl = api.getImageUrl(property.mainImage.data.attributes.url);
   } else if (property?.mainImageUrl) {
-    mainImageUrl = property.mainImageUrl;
+    mainImageUrl = api.getImageUrl(property.mainImageUrl);
   }
 
   let galleryUrls = [];
   if (property?.galleryImages?.data) {
     galleryUrls = property.galleryImages.data.map(img => api.getImageUrl(img.attributes.url));
   } else if (property?.galleryImageUrls && Array.isArray(property.galleryImageUrls)) {
-    galleryUrls = property.galleryImageUrls;
+    galleryUrls = property.galleryImageUrls.map(url => api.getImageUrl(url));
   }
   
   if (galleryUrls.length === 0) {
@@ -365,26 +548,26 @@ export default function PropertyDetail() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 text-xs">
               <a 
                 href="tel:+919741111756" 
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium border border-slate-200 transition duration-300"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium border border-slate-200 transition duration-300 whitespace-nowrap"
               >
-                <BiPhoneCall className="text-lg text-teal-500" />
-                Call Agent
+                <BiPhoneCall className="text-base text-teal-500 shrink-0" />
+                Call Us
               </a>
               <a 
                 href={`https://wa.me/919741111756?text=I%20am%20interested%20in%20${encodeURIComponent(title)}%20located%20in%20${encodeURIComponent(fLocation.text)}.%20Please%20send%20more%20details.`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl font-bold transition duration-300"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-3 bg-[#25d366] hover:bg-[#20ba5a] text-white rounded-xl font-bold transition duration-300 whitespace-nowrap"
               >
-                <FaWhatsapp className="text-lg" />
+                <FaWhatsapp className="text-base shrink-0" />
                 WhatsApp
               </a>
               <button 
                 onClick={() => setEnquireModalOpen(true)}
-                className="flex-1 flex items-center justify-center px-5 py-3 bg-teal-500 hover:bg-teal-650 text-white rounded-xl font-bold transition duration-300 shadow-md shadow-teal-500/20"
+                className="flex-1 flex items-center justify-center px-3 py-3 bg-teal-500 hover:bg-teal-650 text-white rounded-xl font-bold transition duration-300 shadow-md shadow-teal-500/20 whitespace-nowrap"
               >
                 Enquire
               </button>
@@ -405,24 +588,24 @@ export default function PropertyDetail() {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {[
-                { label: 'Bedrooms', value: `${fBedrooms.text} BHK`, icon: <BiBed />, isDemo: fBedrooms.isDemo },
-                { label: 'Bathrooms', value: `${fBathrooms.text} Baths`, icon: <BiBath />, isDemo: fBathrooms.isDemo },
-                { label: 'Super Built-Up Area', value: fArea.text, icon: <BiArea />, isDemo: fArea.isDemo },
                 { label: 'Property Type', value: fPropertyType.text, icon: <BiBuilding />, isDemo: fPropertyType.isDemo },
-                { label: 'Possession Date', value: fPossessionDate.text, icon: <BiCalendar />, isDemo: fPossessionDate.isDemo },
-                { label: 'Builder Name', value: fBuilderName.text, icon: <BiUser />, isDemo: fBuilderName.isDemo }
+                { label: 'Builder Name', value: fBuilderName.text, icon: <BiUser />, isDemo: fBuilderName.isDemo },
+                { label: 'Bathrooms', value: `${fBathrooms.text} Baths`, icon: <BiBath />, isDemo: fBathrooms.isDemo },
+                { label: 'Furnishing', value: fFurnishing.text, icon: <BiBed />, isDemo: fFurnishing.isDemo },
+                { label: 'Parking Spaces', value: fParking.text, icon: <BiCar />, isDemo: fParking.isDemo },
+                { label: 'RERA Reg No.', value: fReraNumber.text, icon: <img src="/rera_logo.png" className="w-6 h-6 object-contain" alt="RERA" />, isDemo: fReraNumber.isDemo }
               ].map((item, index) => (
                 <motion.div 
                   key={index}
                   whileHover={{ y: -5 }}
-                  className="bg-white p-4 rounded-xl border border-slate-200 flex items-center space-x-4 shadow-sm"
+                  className="bg-white p-4 rounded-xl border border-slate-200 flex items-center space-x-4 shadow-sm min-w-0"
                 >
-                  <div className="text-2xl text-teal-600 bg-teal-50 p-3 rounded-lg">
+                  <div className="text-2xl text-teal-600 bg-teal-50 p-3 rounded-lg shrink-0 flex items-center justify-center w-12 h-12">
                     {item.icon}
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs text-slate-500 uppercase tracking-wider">{item.label}</p>
-                    <p className={`text-sm font-bold mt-0.5 ${item.isDemo ? 'text-slate-450 italic font-normal' : 'text-slate-800'}`}>
+                    <p className={`text-sm font-bold mt-0.5 break-all ${item.isDemo ? 'text-slate-450 italic font-normal' : 'text-slate-800'}`}>
                       {item.value}
                     </p>
                   </div>
@@ -444,32 +627,144 @@ export default function PropertyDetail() {
               )}
               <div 
                 className="text-slate-600 leading-relaxed font-sans text-sm sm:text-base space-y-4 pt-2 border-t border-slate-100"
-                dangerouslySetInnerHTML={{ __html: property?.longDescription || '<p>Premium residences in Bangalore by Tirumakudalu Properties.</p>' }}
+                dangerouslySetInnerHTML={{ __html: formatHtmlRanges(property?.longDescription || '<p>Premium residences in Bangalore by Tirumakudalu Properties.</p>') }}
               />
-              <div className="pt-4 flex flex-wrap gap-4 items-center">
-                <a 
-                  href={property?.brochureUrl || '#'} 
-                  download 
-                  onClick={(e) => {
-                    if (!property?.brochureUrl) {
-                      e.preventDefault();
-                      alert('Brochure file is being generated. An agent will send it over WhatsApp shortly.');
-                    }
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-650 text-white rounded-xl font-bold transition duration-300 text-sm shadow-md"
-                >
-                  <BiDownload className="text-lg" />
-                  Download Brochure
-                </a>
-                <div className="text-xs text-slate-500 flex flex-col justify-center">
-                  <p>RERA Registration Number:</p>
-                  <p className={`font-semibold mt-0.5 ${fReraNumber.isDemo ? 'text-slate-450 italic font-normal' : 'text-slate-700'}`}>
-                    {fReraNumber.text}
-                  </p>
+              {/* STUNNING BROCHURE & RERA TRUST BADGES */}
+              <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gradient-to-r from-slate-50 to-teal-50/20 p-5 rounded-2xl border border-slate-200/80 flex flex-col justify-between gap-4">
+                  <div className="flex items-center space-x-3.5">
+                    <div className="p-3 bg-teal-500/10 text-teal-600 rounded-xl text-2xl">
+                      <BiDownload />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 text-sm">Project Brochure</h4>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Download full floor plans and pricing guide PDF</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setBrochureModalOpen(true)}
+                    className="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-bold transition duration-300 text-xs shadow-sm text-center cursor-pointer"
+                  >
+                    Download Brochure
+                  </button>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200/80 flex flex-col justify-between gap-4">
+                  <div className="flex items-center space-x-3.5">
+                    <div className="w-12 h-12 bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 p-1">
+                      <img src="/rera_logo.png" alt="RERA Logo" className="max-w-full max-h-full object-contain" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="font-bold text-slate-800 text-sm">RERA Registered</h4>
+                        <span className="bg-emerald-50 text-emerald-700 text-[9px] font-bold px-1.5 py-0.2 rounded-full border border-emerald-205">Verified</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        No: <span className="font-mono font-semibold text-slate-700">{fReraNumber.text}</span>
+                      </p>
+                    </div>
+                  </div>
+                  {!fReraNumber.isDemo ? (
+                    <a 
+                      href="https://rera.karnataka.gov.in/" 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="w-full py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg font-bold transition duration-300 text-xs text-center"
+                    >
+                      Verify on RERA Portal
+                    </a>
+                  ) : (
+                    <span className="w-full py-2.5 bg-slate-50 border border-slate-100 text-slate-400 rounded-lg font-bold text-xs text-center cursor-not-allowed">
+                      Demo RERA Number
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
           </section>
+
+          {/* SECTION 3B: ADDITIONAL SPECIFICATIONS */}
+          {((property?.additionalDetails && property?.additionalDetails.length > 0) || property?.furnishing || property?.parking || property?.configuration || property?.specialFeatures) && (
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold font-display text-slate-800 border-l-4 border-teal-500 pl-3">
+                Project Specifications
+              </h2>
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                {property?.additionalDetails && property.additionalDetails.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {property.additionalDetails.map(([key, val], idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex justify-between items-center px-4 py-3 bg-slate-50/40 hover:bg-slate-50/90 border border-slate-105 rounded-xl transition duration-150 min-w-0"
+                      >
+                        <span className="text-slate-500 font-medium text-xs sm:text-sm shrink-0">{key}</span>
+                        <span className="font-semibold text-slate-800 text-xs sm:text-sm text-right pl-4 break-all">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {property?.furnishing && (
+                      <motion.div 
+                        whileHover={{ y: -3 }}
+                        className="p-4 bg-slate-50/50 rounded-xl border border-slate-150 flex items-center space-x-3.5"
+                      >
+                        <div className="text-xl text-teal-600 bg-teal-50 p-2.5 rounded-lg">
+                          <BiBed />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Furnishing</p>
+                          <p className="text-xs font-bold text-slate-700 mt-0.5">
+                            {capitalizeWords(property.furnishing)}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                    {property?.parking && (
+                      <motion.div 
+                        whileHover={{ y: -3 }}
+                        className="p-4 bg-slate-50/50 rounded-xl border border-slate-150 flex items-center space-x-3.5"
+                      >
+                        <div className="text-xl text-teal-600 bg-teal-50 p-2.5 rounded-lg">
+                          <BiCar />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Parking Spaces</p>
+                          <p className="text-xs font-bold text-slate-700 mt-0.5">
+                            {capitalizeWords(property.parking)}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                    {property?.configuration && (
+                      <motion.div 
+                        whileHover={{ y: -3 }}
+                        className="p-4 bg-slate-50/50 rounded-xl border border-slate-150 flex items-center space-x-3.5"
+                      >
+                        <div className="text-xl text-teal-600 bg-teal-50 p-2.5 rounded-lg">
+                          <BiBuilding />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Configuration</p>
+                          <p className="text-xs font-bold text-slate-700 mt-0.5">
+                            {property.configuration}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+                {property?.specialFeatures && property.specialFeatures !== 'None' && (
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-2">Special Features & Customizations</p>
+                    <p className="text-slate-650 leading-relaxed text-sm bg-slate-50 p-4 rounded-xl border border-slate-100 whitespace-pre-line">
+                      {property.specialFeatures}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
 
           {/* SECTION 4: GALLERY */}
           <section className="space-y-4">
@@ -774,73 +1069,7 @@ export default function PropertyDetail() {
 
       </div>
 
-      {/* SECTION 9: SIMILAR PROPERTIES */}
-      {similarProperties.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 space-y-6">
-          <h2 className="text-2xl font-bold font-display text-slate-800 border-l-4 border-teal-500 pl-3">
-            Similar Premium Projects
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {similarProperties.map((p, idx) => {
-              const pTitle = p.title || 'Premium Project';
-              const pLoc = p.location || 'Bangalore';
-              const pPrice = p.price || 'Price on Request';
-              const pArea = p.area || '1500 Sqft';
-              const pBhk = p.bedrooms || '3';
-              
-              let pImage = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80';
-              if (p.mainImage?.data) {
-                pImage = api.getImageUrl(p.mainImage.data.attributes.url);
-              } else if (p.mainImageUrl) {
-                pImage = p.mainImageUrl;
-              }
 
-              return (
-                <motion.div 
-                  key={idx}
-                  whileHover={{ y: -8 }}
-                  className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col h-full hover:shadow-md transition duration-300"
-                >
-                  <div className="h-48 relative overflow-hidden bg-slate-100 border-b border-slate-150">
-                    <img 
-                      src={pImage} 
-                      alt={pTitle} 
-                      className="w-full h-full object-cover transition duration-500 hover:scale-105" 
-                    />
-                    <span className="absolute top-4 left-4 px-2.5 py-1 bg-teal-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">
-                      {p.propertyType}
-                    </span>
-                  </div>
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg tracking-tight line-clamp-1">{pTitle}</h3>
-                      <p className="text-xs text-slate-500 mt-1 flex items-center"><BiMapPin className="mr-0.5 text-teal-500" />{pLoc}</p>
-                      
-                      <div className="flex gap-4 mt-4 text-xs text-slate-600">
-                        <span className="flex items-center gap-1"><BiBed className="text-teal-500" />{pBhk} BHK</span>
-                        <span className="flex items-center gap-1"><BiArea className="text-teal-500" />{pArea}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 border-t border-slate-100 pt-4 flex justify-between items-center text-xs">
-                      <div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wider">Starting From</p>
-                        <p className="font-bold text-slate-800 text-base">₹{pPrice}</p>
-                      </div>
-                      <Link 
-                        to={`/property/${p.slug}`} 
-                        className="px-4 py-2 bg-slate-100 hover:bg-teal-500 hover:text-white text-slate-700 text-xs font-bold rounded-xl transition duration-300"
-                      >
-                        Explore Project
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </section>
-      )}
 
       {/* MOBILE STICKY CTA BAR */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200 p-3 flex gap-3 md:hidden shadow-lg">
@@ -849,7 +1078,7 @@ export default function PropertyDetail() {
           className="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold flex items-center justify-center gap-2 border border-slate-200 text-sm hover:bg-slate-250 transition"
         >
           <BiPhoneCall className="text-teal-500 text-lg" />
-          Call
+          Call Us
         </a>
         <a 
           href={`https://wa.me/919741111756?text=I%20am%20interested%20in%20${encodeURIComponent(title)}.%20Please%20send%20details.`}
@@ -1040,6 +1269,101 @@ export default function PropertyDetail() {
                     className="w-full py-3 bg-teal-500 hover:bg-teal-650 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl font-bold transition shadow-lg shadow-teal-500/20"
                   >
                     {formSubmitting ? 'Submitting...' : 'Submit Inquiry'}
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* GATED BROCHURE DOWNLOAD MODAL */}
+      <AnimatePresence>
+        {brochureModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-9999 bg-slate-900/60 flex items-center justify-center p-4 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 30 }}
+              className="bg-white border border-slate-200 w-full max-w-md p-6 sm:p-8 rounded-2xl shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 to-teal-650"></div>
+              
+              <button 
+                onClick={() => setBrochureModalOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 text-2xl"
+              >
+                <BiX />
+              </button>
+
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-slate-800 font-display">Download Project Brochure</h3>
+                <p className="text-xs text-slate-500 mt-1">Please enter your details to immediately unlock and download the official brochure.</p>
+              </div>
+
+              {brochureSuccess ? (
+                <div className="p-4 bg-teal-50 border border-teal-100 rounded-xl text-center space-y-4">
+                  <BiCheckCircle className="text-4xl text-teal-600 mx-auto animate-bounce" />
+                  <p className="text-sm font-semibold text-slate-700">{brochureSuccess}</p>
+                </div>
+              ) : (
+                <form onSubmit={handleBrochureSubmit} className="space-y-4 text-xs">
+                  {brochureError && (
+                    <div className="p-3 bg-red-50 border border-red-100 text-red-500 rounded-lg">
+                      {brochureError}
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-slate-600 mb-1 font-semibold">Your Name</label>
+                    <input 
+                      type="text" 
+                      name="name"
+                      value={brochureFormData.name}
+                      onChange={handleBrochureInputChange}
+                      required
+                      placeholder="John Doe" 
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-teal-500 focus:outline-none text-slate-850 transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-600 mb-1 font-semibold">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      name="phone"
+                      value={brochureFormData.phone}
+                      onChange={handleBrochureInputChange}
+                      required
+                      placeholder="+91 XXXXX XXXXX" 
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-teal-500 focus:outline-none text-slate-850 transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-600 mb-1 font-semibold">Email Address</label>
+                    <input 
+                      type="email" 
+                      name="email"
+                      value={brochureFormData.email}
+                      onChange={handleBrochureInputChange}
+                      required
+                      placeholder="john@example.com" 
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:border-teal-500 focus:outline-none text-slate-850 transition"
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={brochureSubmitting}
+                    className="w-full py-3.5 bg-teal-500 hover:bg-teal-650 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl font-bold transition shadow-lg shadow-teal-500/20"
+                  >
+                    {brochureSubmitting ? 'Starting Download...' : 'Unlock & Download Brochure'}
                   </button>
                 </form>
               )}

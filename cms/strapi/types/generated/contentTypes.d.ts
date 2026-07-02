@@ -483,6 +483,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    additionalDetails: Schema.Attribute.JSON;
     amenities: Schema.Attribute.JSON;
     area: Schema.Attribute.String;
     bathrooms: Schema.Attribute.Integer;
@@ -490,11 +491,13 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     brochurePDF: Schema.Attribute.Media;
     brochureUrl: Schema.Attribute.String;
     builderName: Schema.Attribute.String;
+    configuration: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     floorPlans: Schema.Attribute.JSON;
+    furnishing: Schema.Attribute.String;
     galleryImages: Schema.Attribute.Media<'images', true>;
     galleryImageUrls: Schema.Attribute.JSON;
     latitude: Schema.Attribute.Decimal;
@@ -510,6 +513,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     mainImage: Schema.Attribute.Media<'images'>;
     mainImageUrl: Schema.Attribute.String;
     nearbyPlaces: Schema.Attribute.JSON;
+    parking: Schema.Attribute.String;
     possessionDate: Schema.Attribute.String;
     price: Schema.Attribute.String & Schema.Attribute.Required;
     projectStatus: Schema.Attribute.String &
@@ -524,6 +528,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     seoTitle: Schema.Attribute.String;
     shortDescription: Schema.Attribute.Text;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    specialFeatures: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

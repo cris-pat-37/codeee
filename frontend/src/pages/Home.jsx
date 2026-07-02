@@ -13,6 +13,54 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 export default function Home() {
+  const formatStartingPrice = (priceStr) => {
+    if (!priceStr) return '';
+    if (priceStr.toLowerCase().includes('request')) return 'Price on Request';
+    const cleanStr = priceStr.replace(/–/g, '-');
+    let startPart = '';
+    if (cleanStr.includes('-')) {
+      const parts = cleanStr.split('-');
+      startPart = parts[0].trim();
+      const unitMatch = cleanStr.match(/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i);
+      const unit = unitMatch ? unitMatch[0] : '';
+      const hasUnit = /(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart);
+      if (!hasUnit && unit) {
+        startPart = `${startPart} ${unit}`;
+      }
+    } else {
+      startPart = cleanStr.trim();
+    }
+    
+    // Remove existing "+", "Onwards", and trailing/leading spaces
+    startPart = startPart.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
+    
+    if (/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart)) {
+      return `${startPart} Onwards`;
+    }
+    return startPart;
+  };
+
+  const formatStartingArea = (areaStr) => {
+    if (!areaStr) return '';
+    const cleanStr = areaStr.replace(/–/g, '-');
+    if (cleanStr.includes('-')) {
+      const parts = cleanStr.split('-');
+      let startPart = parts[0].trim();
+      const unitMatch = cleanStr.match(/(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i);
+      const unit = unitMatch ? unitMatch[0] : 'Sq.ft';
+      const hasUnit = /(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i.test(startPart);
+      if (!hasUnit) {
+        startPart = `${startPart} ${unit}`;
+      }
+      startPart = startPart.replace(/\+$/, '').trim();
+      return startPart;
+    }
+    if (areaStr.endsWith('+')) {
+      return areaStr.slice(0, -1).trim();
+    }
+    return areaStr;
+  };
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -211,7 +259,9 @@ export default function Home() {
                 if (p.mainImage?.data) {
                   imgUrl = api.getImageUrl(p.mainImage.data.attributes.url);
                 } else if (p.mainImageUrl) {
-                  imgUrl = p.mainImageUrl;
+                  imgUrl = api.getImageUrl(p.mainImageUrl);
+                } else if (p.mainImage) {
+                  imgUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || imgUrl);
                 }
 
                 const priceText = p.price || 'Price on Request';
@@ -251,14 +301,14 @@ export default function Home() {
                             <BiBed className="text-[#1ea69a]" /> {p.bedrooms || '3'} BHK
                           </span>
                           <span>•</span>
-                          <span>{p.area || '1600 Sqft'}</span>
+                          <span>{formatStartingArea(p.area) || '1600 Sqft'}</span>
                         </div>
                         <div>
                           <Link 
                             to={`/property/${p.slug}`}
                             className="text-xs font-bold text-[#1ea69a] hover:underline"
                           >
-                            ₹{priceText}
+                            {priceText.toLowerCase().includes('request') ? priceText : `₹${formatStartingPrice(priceText)}`}
                           </Link>
                         </div>
                       </div>
@@ -482,9 +532,9 @@ export default function Home() {
               if (p.mainImage?.data) {
                 mainImageUrl = api.getImageUrl(p.mainImage.data.attributes.url);
               } else if (p.mainImageUrl) {
-                mainImageUrl = p.mainImageUrl;
+                mainImageUrl = api.getImageUrl(p.mainImageUrl);
               } else if (p.mainImage) {
-                mainImageUrl = typeof p.mainImage === 'string' ? p.mainImage : api.getImageUrl(p.mainImage.url || mainImageUrl);
+                mainImageUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || mainImageUrl);
               }
 
               // Prefilled demo data visual placeholder resolution
@@ -497,8 +547,8 @@ export default function Home() {
 
               const fLocation = resolveField(p.location, 'Kempanahalli, Bangalore');
               const fBedrooms = resolveField(p.bedrooms, '3');
-              const fArea = resolveField(p.area, '1600 Sqft');
-              const fPrice = resolveField(p.price, '1.69 Crores');
+              const fArea = resolveField(formatStartingArea(p.area), '1600 Sqft');
+              const fPrice = resolveField(formatStartingPrice(p.price), '1.69 Crores');
 
               return (
                 <div
