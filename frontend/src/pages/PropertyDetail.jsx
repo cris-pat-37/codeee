@@ -25,50 +25,94 @@ import 'swiper/css/pagination';
 export default function PropertyDetail() {
   const { slug } = useParams();
   
-  const formatStartingPrice = (priceStr) => {
+  const extractAreaNumber = (areaStr) => {
+    if (!areaStr) return 0;
+    const str = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '').replace(/–/g, '-').replace(/\s*to\s*/g, '-');
+    const match = str.match(/(\d{3,5})/);
+    if (match) {
+      return parseFloat(match[1]);
+    }
+    return 0;
+  };
+
+  const formatStartingPrice = (priceStr, areaStr) => {
     if (!priceStr) return '';
-    if (priceStr.toLowerCase().includes('request')) return 'Price on Request';
-    const cleanStr = priceStr.replace(/–/g, '-');
-    let startPart = '';
-    if (cleanStr.includes('-')) {
-      const parts = cleanStr.split('-');
-      startPart = parts[0].trim();
-      const unitMatch = cleanStr.match(/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i);
-      const unit = unitMatch ? unitMatch[0] : '';
-      const hasUnit = /(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart);
-      if (!hasUnit && unit) {
-        startPart = `${startPart} ${unit}`;
+    const str = priceStr.toLowerCase();
+    if (str.includes('request')) return 'Price on Request';
+    
+    // Check if it's a rate per sq.ft and we need to multiply it by the area
+    const isRate = str.includes('per sq') || str.includes('/sq') || str.includes('rate');
+    if (isRate) {
+      const rateMatch = str.match(/(?:rate|rs\.?)?\s*(\d+(?:,\d+)?)(?:\/-)?\s*(?:per|\/)\s*sq/i) || str.match(/(\d+(?:,\d+)?)\s*(?:per|\/)\s*sq/i) || str.match(/(\d{4,5})/);
+      if (rateMatch) {
+        const rate = parseFloat(rateMatch[1].replace(/,/g, ''));
+        if (rate > 0) {
+          const areaNum = extractAreaNumber(areaStr);
+          if (areaNum > 0) {
+            const total = rate * areaNum;
+            const formattedVal = total >= 10000000 
+              ? parseFloat((total / 10000000).toFixed(2)) + " Cr"
+              : parseFloat((total / 100000).toFixed(2)) + " Lakh";
+            return `${formattedVal} Onwards`;
+          }
+        }
       }
-    } else {
-      startPart = cleanStr.trim();
     }
     
-    // Remove existing "+", "Onwards", and trailing/leading spaces
-    startPart = startPart.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
-    
-    if (/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart)) {
-      return `${startPart} Onwards`;
+    // Find all matches for prices in crores or lakhs (e.g. Rs 2.799 cr)
+    const regex = /(?:rs\.?\s*)?(\d+(?:\.\d+)?)\s*(?:cr|crore|crores|lakh|lakhs|lakh\s*\+)/g;
+    let matches = [];
+    let match;
+    while ((match = regex.exec(str)) !== null) {
+      const val = parseFloat(match[1]);
+      const isLakh = match[0].includes('lakh');
+      matches.push({
+        value: val,
+        isLakh: isLakh,
+        text: isLakh 
+          ? `${parseFloat(val.toFixed(2))} Lakh` 
+          : `${parseFloat(val.toFixed(2))} Cr`
+      });
     }
-    return startPart;
+    
+    if (matches.length > 0) {
+      matches.sort((a, b) => {
+        const valA = a.isLakh ? a.value : a.value * 100;
+        const valB = b.isLakh ? b.value : b.value * 100;
+        return valA - valB;
+      });
+      return `${matches[0].text} Onwards`;
+    }
+    
+    let cleanStr = priceStr.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
+    if (cleanStr.includes(',')) {
+      cleanStr = cleanStr.split(',')[0].trim();
+    }
+    return `${cleanStr} Onwards`;
   };
 
   const formatStartingArea = (areaStr) => {
     if (!areaStr) return '';
-    const cleanStr = areaStr.replace(/–/g, '-');
-    if (cleanStr.includes('-')) {
-      const parts = cleanStr.split('-');
-      let startPart = parts[0].trim();
-      const unitMatch = cleanStr.match(/(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i);
+    // Clean BHK and other layouts including typos like bhl or bhr
+    const strCleaned = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bhl|bhr|hk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '');
+    let str = strCleaned.replace(/–/g, '-').replace(/\s*to\s*/g, '-');
+    
+    // Strip plot dimensions like 30*40 or 30*50
+    str = str.replace(/\d{2}\s*[\*x]\s*\d{2}/g, '');
+    
+    // Enforce 3 to 5 digits only to avoid matching single configuration digit types
+    const regex = /(\d{3,5})\s*(?:sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)?/i;
+    const match = str.match(regex);
+    if (match) {
+      const val = match[1];
+      const unitMatch = str.match(/(sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)/i);
       const unit = unitMatch ? unitMatch[0] : 'Sq.ft';
-      const hasUnit = /(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i.test(startPart);
-      if (!hasUnit) {
-        startPart = `${startPart} ${unit}`;
-      }
-      startPart = startPart.replace(/\+$/, '').trim();
-      return startPart;
-    }
-    if (areaStr.endsWith('+')) {
-      return areaStr.slice(0, -1).trim();
+      let displayUnit = 'Sq.ft';
+      if (unit.toLowerCase().includes('meter')) displayUnit = 'Sq.m';
+      if (unit.toLowerCase().includes('yd')) displayUnit = 'Sq.yds';
+      
+      const isRange = areaStr.toLowerCase().includes('to') || areaStr.toLowerCase().includes('-') || areaStr.toLowerCase().includes('or') || areaStr.toLowerCase().includes('+');
+      return isRange ? `${val} ${displayUnit} Onwards` : `${val} ${displayUnit}`;
     }
     return areaStr;
   };
@@ -77,10 +121,6 @@ export default function PropertyDetail() {
     if (!prop) return '';
     const areaStr = prop.area || '';
     const bedrooms = prop.bedrooms;
-    
-    if (!areaStr.includes('-')) {
-      return areaStr;
-    }
     
     const desc = prop.longDescription || '';
     if (desc && bedrooms) {
@@ -93,6 +133,20 @@ export default function PropertyDetail() {
     }
     
     return formatStartingArea(areaStr);
+  };
+
+  const getCleanConfigText = (prop) => {
+    if (!prop) return '';
+    const configStr = prop.configuration || '';
+    // Find BHK numbers
+    const matches = [...configStr.matchAll(/(\d+)\s*(?:bhk|bed|bedroom|hk)/gi)];
+    const uniqueBhks = [...new Set(matches.map(m => parseInt(m[1])))].sort();
+    const typeLabel = prop.propertyType ? prop.propertyType.trim() : 'Apartment';
+    
+    if (uniqueBhks.length > 0) {
+      return `${uniqueBhks.join(', ')} BHK ${typeLabel}s`;
+    }
+    return prop.bedrooms ? `${prop.bedrooms} BHK ${typeLabel}` : configStr;
   };
 
   const formatHtmlRanges = (html) => {
@@ -377,13 +431,13 @@ export default function PropertyDetail() {
     if (val && String(val).trim() !== '') {
       return { text: val, isDemo: false };
     }
-    return { text: `${placeholder} (Demo)`, isDemo: true };
+    return { text: placeholder, isDemo: true };
   };
 
   const title = property?.title || 'Property Detail';
   
   // Field values with prefilled demo data resolve
-  const formattedPrice = formatStartingPrice(property?.price);
+  const formattedPrice = formatStartingPrice(property?.price, property?.area);
   const formattedArea = getExactAreaForBhk(property);
 
   const fPrice = resolveField(formattedPrice, '1.69 Crores');
@@ -403,7 +457,7 @@ export default function PropertyDetail() {
   const youtubeVideoId = youtubeVideo.split('v=')[1]?.split('&')[0] || youtubeVideo.split('/').pop() || 'ScMzIvxBSi4';
 
   // Dynamic Image resolution (Local CMS assets vs Absolute crawled URLs)
-  let mainImageUrl = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80';
+  let mainImageUrl = null;
   if (property?.mainImage?.data) {
     mainImageUrl = api.getImageUrl(property.mainImage.data.attributes.url);
   } else if (property?.mainImageUrl) {
@@ -417,7 +471,7 @@ export default function PropertyDetail() {
     galleryUrls = property.galleryImageUrls.map(url => api.getImageUrl(url));
   }
   
-  if (galleryUrls.length === 0) {
+  if (galleryUrls.length === 0 && mainImageUrl) {
     galleryUrls = [mainImageUrl];
   }
 
@@ -433,10 +487,7 @@ export default function PropertyDetail() {
   const amenitiesList = Array.isArray(rawAmenities) ? rawAmenities : [];
 
   // Floor plans
-  const defaultFloorPlans = [
-    { title: 'Typical Unit A', size: fArea.text, image: 'https://images.unsplash.com/photo-1545464693-f1798a373343?auto=format&fit=crop&w=800&q=80' }
-  ];
-  const floorPlansList = property?.floorPlans || defaultFloorPlans;
+  const floorPlansList = property?.floorPlans && Array.isArray(property.floorPlans) ? property.floorPlans : [];
 
   // Nearby Landmarks
   const defaultNearby = [
@@ -475,25 +526,32 @@ export default function PropertyDetail() {
       </Helmet>
 
       {/* SECTION 1: HERO */}
-      <section className="relative w-full h-[65vh] sm:h-[75vh] overflow-hidden">
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
-          className="w-full h-full"
-        >
-          {galleryUrls.map((url, idx) => (
-            <SwiperSlide key={idx} className="w-full h-full relative">
-              <img 
-                src={url} 
-                alt={`${title} Slide ${idx + 1}`} 
-                className="w-full h-full object-cover" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+      <section className="relative w-full h-[65vh] sm:h-[75vh] overflow-hidden bg-slate-900 flex items-center justify-center">
+        {galleryUrls.length > 0 ? (
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            navigation
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            className="w-full h-full"
+          >
+            {galleryUrls.map((url, idx) => (
+              <SwiperSlide key={idx} className="w-full h-full relative">
+                <img 
+                  src={url} 
+                  alt={`${title} Slide ${idx + 1}`} 
+                  className="w-full h-full object-cover" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div className="w-full h-full bg-slate-800 flex flex-col items-center justify-center text-slate-400 select-none">
+            <span className="text-xs font-bold uppercase tracking-wider">No Image Gallery Available</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent z-10 pointer-events-none"></div>
+          </div>
+        )}
 
         {/* Floating Property Info Overlay Card */}
         <div className="absolute bottom-12 left-4 right-4 md:left-12 md:right-auto z-20 max-w-xl">
@@ -528,7 +586,7 @@ export default function PropertyDetail() {
             <div className="flex flex-wrap items-baseline gap-2 mb-6">
               <span className="text-slate-500 text-xs uppercase font-semibold">Starting Price</span>
               <span className={`text-3xl font-bold font-display ${fPrice.isDemo ? 'text-teal-500/60 italic' : 'text-slate-800'}`}>
-                ₹{fPrice.text}
+                {fPrice.text.toLowerCase().includes('request') ? fPrice.text : `₹${fPrice.text}`}
               </span>
             </div>
 
@@ -747,7 +805,7 @@ export default function PropertyDetail() {
                         <div>
                           <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Configuration</p>
                           <p className="text-xs font-bold text-slate-700 mt-0.5">
-                            {property.configuration}
+                            {getCleanConfigText(property)}
                           </p>
                         </div>
                       </motion.div>
@@ -812,71 +870,73 @@ export default function PropertyDetail() {
           </section>
 
           {/* SECTION 6: FLOOR PLANS */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold font-display text-slate-800 border-l-4 border-teal-500 pl-3">
-              Floor Plans
-            </h2>
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <div className="flex border-b border-slate-150 mb-6 gap-4">
-                {floorPlansList.map((plan, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveFloorPlanIndex(idx)}
-                    className={`pb-3 font-semibold text-sm transition relative ${
-                      activeFloorPlanIndex === idx ? 'text-teal-600' : 'text-slate-500 hover:text-slate-700'
-                    }`}
-                  >
-                    {plan.title || `Plan ${idx + 1}`}
-                    {activeFloorPlanIndex === idx && (
-                      <motion.div 
-                        layoutId="floorPlanUnderline"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-500" 
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
+          {floorPlansList.length > 0 && (
+            <section className="space-y-4">
+              <h2 className="text-2xl font-bold font-display text-slate-800 border-l-4 border-teal-500 pl-3">
+                Floor Plans
+              </h2>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="flex border-b border-slate-150 mb-6 gap-4 font-sans overflow-x-auto whitespace-nowrap scrollbar-none pb-1">
+                  {floorPlansList.map((plan, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveFloorPlanIndex(idx)}
+                      className={`pb-3 font-semibold text-sm transition relative shrink-0 ${
+                        activeFloorPlanIndex === idx ? 'text-teal-600' : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      {plan.title || `Plan ${idx + 1}`}
+                      {activeFloorPlanIndex === idx && (
+                        <motion.div 
+                          layoutId="floorPlanUnderline"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-500" 
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
-                <div className="md:col-span-2 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800">
-                    {floorPlansList[activeFloorPlanIndex]?.title || 'Floor Plan'}
-                  </h3>
-                  <div className="space-y-2 text-xs text-slate-655">
-                    <p className="flex justify-between border-b border-slate-100 pb-2">
-                      <span className="text-slate-500">Total Area:</span>
-                      <span className={`font-semibold ${fArea.isDemo ? 'text-slate-450 italic font-normal' : 'text-slate-800'}`}>
-                        {floorPlansList[activeFloorPlanIndex]?.size || fArea.text}
-                      </span>
-                    </p>
-                    <p className="flex justify-between border-b border-slate-100 pb-2">
-                      <span className="text-slate-500">Property Type:</span>
-                      <span className="font-semibold text-slate-800">{fPropertyType.text}</span>
-                    </p>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
+                  <div className="md:col-span-2 space-y-4">
+                    <h3 className="text-lg font-bold text-slate-800">
+                      {floorPlansList[activeFloorPlanIndex]?.title || 'Floor Plan'}
+                    </h3>
+                    <div className="space-y-2 text-xs text-slate-655 font-sans">
+                      <p className="flex justify-between border-b border-slate-100 pb-2">
+                        <span className="text-slate-500">Total Area:</span>
+                        <span className={`font-semibold ${fArea.isDemo ? 'text-slate-450 italic font-normal' : 'text-slate-800'}`}>
+                          {floorPlansList[activeFloorPlanIndex]?.size || fArea.text}
+                        </span>
+                      </p>
+                      <p className="flex justify-between border-b border-slate-100 pb-2">
+                        <span className="text-slate-500">Property Type:</span>
+                        <span className="font-semibold text-slate-800">{fPropertyType.text}</span>
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => setFloorPlanLightboxOpen(true)}
+                      className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition border border-slate-200"
+                    >
+                      View Layout Spec
+                    </button>
                   </div>
-                  <button 
+                  <div 
+                    className="md:col-span-3 border border-slate-150 rounded-xl overflow-hidden cursor-zoom-in bg-slate-50 p-4 flex items-center justify-center h-64 relative group"
                     onClick={() => setFloorPlanLightboxOpen(true)}
-                    className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition border border-slate-200"
                   >
-                    View Layout Spec
-                  </button>
-                </div>
-                <div 
-                  className="md:col-span-3 border border-slate-150 rounded-xl overflow-hidden cursor-zoom-in bg-slate-50 p-4 flex items-center justify-center h-64 relative group"
-                  onClick={() => setFloorPlanLightboxOpen(true)}
-                >
-                  <img 
-                    src={floorPlansList[activeFloorPlanIndex]?.image || 'https://images.unsplash.com/photo-1545464693-f1798a373343?auto=format&fit=crop&w=800&q=80'} 
-                    alt={floorPlansList[activeFloorPlanIndex]?.title || 'Floor Plan'} 
-                    className="max-h-full max-w-full object-contain"
-                  />
-                  <div className="absolute top-4 right-4 bg-slate-800/90 p-2 rounded-lg text-slate-200 border border-slate-700 opacity-0 group-hover:opacity-100 transition text-[10px]">
-                    Click to Zoom
+                    <img 
+                      src={api.getImageUrl(floorPlansList[activeFloorPlanIndex]?.image) || 'https://images.unsplash.com/photo-1545464693-f1798a373343?auto=format&fit=crop&w=800&q=80'} 
+                      alt={floorPlansList[activeFloorPlanIndex]?.title || 'Floor Plan'} 
+                      className="max-h-full max-w-full object-contain"
+                    />
+                    <div className="absolute top-4 right-4 bg-slate-800/90 p-2 rounded-lg text-slate-200 border border-slate-700 opacity-0 group-hover:opacity-100 transition text-[10px]">
+                      Click to Zoom
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* SECTION 7: LOCATION */}
           <section className="space-y-4">
@@ -908,23 +968,7 @@ export default function PropertyDetail() {
             </div>
           </section>
 
-          {/* SECTION 8: PROPERTY VIDEO */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold font-display text-slate-800 border-l-4 border-teal-500 pl-3">
-              Walkthrough Video
-            </h2>
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-slate-950 relative border border-slate-200">
-                <iframe 
-                  src={`https://www.youtube.com/embed/${youtubeVideoId}`}
-                  title={`${title} Video Walkthrough`}
-                  className="absolute inset-0 w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-          </section>
+
 
         </div>
 
@@ -1152,7 +1196,7 @@ export default function PropertyDetail() {
             </button>
             <div className="max-w-4xl max-h-[85vh] w-full p-4 flex items-center justify-center bg-slate-900/40 rounded-2xl border border-slate-800">
               <img 
-                src={floorPlansList[activeFloorPlanIndex]?.image || 'https://images.unsplash.com/photo-1545464693-f1798a373343?auto=format&fit=crop&w=800&q=80'} 
+                src={api.getImageUrl(floorPlansList[activeFloorPlanIndex]?.image) || 'https://images.unsplash.com/photo-1545464693-f1798a373343?auto=format&fit=crop&w=800&q=80'} 
                 alt="Floor Plan Detail" 
                 className="max-w-full max-h-[80vh] object-contain" 
               />

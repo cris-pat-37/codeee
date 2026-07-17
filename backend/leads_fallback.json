@@ -43,5 +43,23 @@
     "propertySlug": "ivory-terraces",
     "propertyName": "Ivory Terraces",
     "createdAt": "2026-07-01T18:56:37.358Z"
+  },
+  {
+    "name": "ara",
+    "phone": "9030706558",
+    "email": "vishwaphathiaravindh@gmail.com",
+    "message": "Downloaded Brochure for Brigade Blevedere.",
+    "propertySlug": "brigade-blevedere",
+    "propertyName": "Brigade Blevedere",
+    "createdAt": "2026-07-10T11:55:25.520Z"
+  },
+  {
+    "name": "ara",
+    "phone": "9030706558",
+    "email": "vishwaphathiaravindh@gmail.com",
+    "message": "Downloaded Brochure for Mea & Meadows.",
+    "propertySlug": "mea-meadows",
+    "propertyName": "Mea & Meadows",
+    "createdAt": "2026-07-14T18:28:04.957Z"
   }
 ]

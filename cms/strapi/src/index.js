@@ -98,6 +98,15 @@ module.exports = {
       }
 
       // 2. Seed Mock Property Data from properties_rest.json
+      const normalizePrice = (raw) => {
+        if (!raw) return null;
+        const s = String(raw).trim();
+        if (s.toLowerCase().includes('request')) return 'Price on Request';
+        const match = s.match(/(\d+(?:\.\d+)?)\s*(cr|crore|lakh|l)/i);
+        if (match) return `${match[1]} ${match[2].toLowerCase().startsWith('c') ? 'Crores' : 'Lakhs'}`;
+        return s;
+      };
+
       const getPropertiesCount = async () => {
         if (strapi.documents) {
           const res = await strapi.documents('api::property.property').findMany({ fields: ['id'] });
@@ -147,10 +156,9 @@ module.exports = {
             };
 
             // Map price
-            let price = meta.REAL_HOMES_property_price || 'Price on Request';
-            if (price !== 'Price on Request' && meta.REAL_HOMES_property_price_postfix) {
-              price = `${price} ${meta.REAL_HOMES_property_price_postfix}`;
-            }
+            const rawPrice = meta.REAL_HOMES_property_price || 'Price on Request';
+            const postfix = meta.REAL_HOMES_property_price_postfix || '';
+            let price = normalizePrice(`${rawPrice} ${postfix}`);
 
             // Map size
             let area = '1200 Sqft';

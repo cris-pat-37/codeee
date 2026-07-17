@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' ? (window.location.port && window.location.port !== '80' && window.location.port !== '443' ? `${window.location.protocol}//${window.location.hostname}:5000` : window.location.origin) : 'http://localhost:5000');
+const STRAPI_URL = BACKEND_URL; // Point to the single consolidated server!
 
 const strapiClient = axios.create({
   baseURL: `${STRAPI_URL}/api`,
@@ -49,7 +49,7 @@ export const api = {
   // Fetch all properties (catalog/listings)
   getAllProperties: async () => {
     try {
-      const response = await strapiClient.get('/properties?populate=*');
+      const response = await strapiClient.get('/properties?populate=*&pagination[limit]=100');
       return response.data;
     } catch (error) {
       console.error(`Error fetching all properties: ${error.message}`);

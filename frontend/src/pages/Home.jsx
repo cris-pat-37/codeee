@@ -13,50 +13,94 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 export default function Home() {
-  const formatStartingPrice = (priceStr) => {
+  const extractAreaNumber = (areaStr) => {
+    if (!areaStr) return 0;
+    const str = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '').replace(/–/g, '-').replace(/\s*to\s*/g, '-');
+    const match = str.match(/(\d{3,5})/);
+    if (match) {
+      return parseFloat(match[1]);
+    }
+    return 0;
+  };
+
+  const formatStartingPrice = (priceStr, areaStr) => {
     if (!priceStr) return '';
-    if (priceStr.toLowerCase().includes('request')) return 'Price on Request';
-    const cleanStr = priceStr.replace(/–/g, '-');
-    let startPart = '';
-    if (cleanStr.includes('-')) {
-      const parts = cleanStr.split('-');
-      startPart = parts[0].trim();
-      const unitMatch = cleanStr.match(/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i);
-      const unit = unitMatch ? unitMatch[0] : '';
-      const hasUnit = /(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart);
-      if (!hasUnit && unit) {
-        startPart = `${startPart} ${unit}`;
+    const str = priceStr.toLowerCase();
+    if (str.includes('request')) return 'Price on Request';
+    
+    // Check if it's a rate per sq.ft and we need to multiply it by the area
+    const isRate = str.includes('per sq') || str.includes('/sq') || str.includes('rate');
+    if (isRate) {
+      const rateMatch = str.match(/(?:rate|rs\.?)?\s*(\d+(?:,\d+)?)(?:\/-)?\s*(?:per|\/)\s*sq/i) || str.match(/(\d+(?:,\d+)?)\s*(?:per|\/)\s*sq/i) || str.match(/(\d{4,5})/);
+      if (rateMatch) {
+        const rate = parseFloat(rateMatch[1].replace(/,/g, ''));
+        if (rate > 0) {
+          const areaNum = extractAreaNumber(areaStr);
+          if (areaNum > 0) {
+            const total = rate * areaNum;
+            const formattedVal = total >= 10000000 
+              ? parseFloat((total / 10000000).toFixed(2)) + " Cr"
+              : parseFloat((total / 100000).toFixed(2)) + " Lakh";
+            return `${formattedVal} Onwards`;
+          }
+        }
       }
-    } else {
-      startPart = cleanStr.trim();
     }
     
-    // Remove existing "+", "Onwards", and trailing/leading spaces
-    startPart = startPart.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
-    
-    if (/(Cr|Crores|Crore|Lakh|Lakhs|L|Lac|Lacs)\b/i.test(startPart)) {
-      return `${startPart} Onwards`;
+    // Find all matches for prices in crores or lakhs (e.g. Rs 2.799 cr)
+    const regex = /(?:rs\.?\s*)?(\d+(?:\.\d+)?)\s*(?:cr|crore|crores|lakh|lakhs|lakh\s*\+)/g;
+    let matches = [];
+    let match;
+    while ((match = regex.exec(str)) !== null) {
+      const val = parseFloat(match[1]);
+      const isLakh = match[0].includes('lakh');
+      matches.push({
+        value: val,
+        isLakh: isLakh,
+        text: isLakh 
+          ? `${parseFloat(val.toFixed(2))} Lakh` 
+          : `${parseFloat(val.toFixed(2))} Cr`
+      });
     }
-    return startPart;
+    
+    if (matches.length > 0) {
+      matches.sort((a, b) => {
+        const valA = a.isLakh ? a.value : a.value * 100;
+        const valB = b.isLakh ? b.value : b.value * 100;
+        return valA - valB;
+      });
+      return `${matches[0].text} Onwards`;
+    }
+    
+    let cleanStr = priceStr.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
+    if (cleanStr.includes(',')) {
+      cleanStr = cleanStr.split(',')[0].trim();
+    }
+    return `${cleanStr} Onwards`;
   };
 
   const formatStartingArea = (areaStr) => {
     if (!areaStr) return '';
-    const cleanStr = areaStr.replace(/–/g, '-');
-    if (cleanStr.includes('-')) {
-      const parts = cleanStr.split('-');
-      let startPart = parts[0].trim();
-      const unitMatch = cleanStr.match(/(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i);
+    // Clean BHK and other layouts including typos like bhl or bhr
+    const strCleaned = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bhl|bhr|hk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '');
+    let str = strCleaned.replace(/–/g, '-').replace(/\s*to\s*/g, '-');
+    
+    // Strip plot dimensions like 30*40 or 30*50
+    str = str.replace(/\d{2}\s*[\*x]\s*\d{2}/g, '');
+    
+    // Enforce 3 to 5 digits only to avoid matching single configuration digit types
+    const regex = /(\d{3,5})\s*(?:sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)?/i;
+    const match = str.match(regex);
+    if (match) {
+      const val = match[1];
+      const unitMatch = str.match(/(sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)/i);
       const unit = unitMatch ? unitMatch[0] : 'Sq.ft';
-      const hasUnit = /(Sq\.?ft|sqft|square\s*feet|sq\s*meters|sq\s*yds)/i.test(startPart);
-      if (!hasUnit) {
-        startPart = `${startPart} ${unit}`;
-      }
-      startPart = startPart.replace(/\+$/, '').trim();
-      return startPart;
-    }
-    if (areaStr.endsWith('+')) {
-      return areaStr.slice(0, -1).trim();
+      let displayUnit = 'Sq.ft';
+      if (unit.toLowerCase().includes('meter')) displayUnit = 'Sq.m';
+      if (unit.toLowerCase().includes('yd')) displayUnit = 'Sq.yds';
+      
+      const isRange = areaStr.toLowerCase().includes('to') || areaStr.toLowerCase().includes('-') || areaStr.toLowerCase().includes('or') || areaStr.toLowerCase().includes('+');
+      return isRange ? `${val} ${displayUnit} Onwards` : `${val} ${displayUnit}`;
     }
     return areaStr;
   };
@@ -236,7 +280,9 @@ export default function Home() {
 
   // Get featured properties for the Swiper slider
   const featuredProperties = properties.filter(p => p.featured) || [];
-  const sliderList = featuredProperties.length > 0 ? featuredProperties : properties.slice(0, 3);
+  const sliderList = (featuredProperties.length > 0 ? featuredProperties : properties)
+    .filter(p => p.mainImage || p.mainImageUrl)
+    .slice(0, 5);
 
   return (
     <div className="min-h-screen bg-[#f7f7f7] text-[#333333] font-sans pb-20">
@@ -255,13 +301,13 @@ export default function Home() {
               className="w-full h-full"
             >
               {sliderList.map((p, idx) => {
-                let imgUrl = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80';
+                let imgUrl = null;
                 if (p.mainImage?.data) {
                   imgUrl = api.getImageUrl(p.mainImage.data.attributes.url);
                 } else if (p.mainImageUrl) {
                   imgUrl = api.getImageUrl(p.mainImageUrl);
                 } else if (p.mainImage) {
-                  imgUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || imgUrl);
+                  imgUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || null);
                 }
 
                 const priceText = p.price || 'Price on Request';
@@ -308,7 +354,7 @@ export default function Home() {
                             to={`/property/${p.slug}`}
                             className="text-xs font-bold text-[#1ea69a] hover:underline"
                           >
-                            {priceText.toLowerCase().includes('request') ? priceText : `₹${formatStartingPrice(priceText)}`}
+                            {priceText.toLowerCase().includes('request') ? priceText : `₹${formatStartingPrice(priceText, p.area)}`}
                           </Link>
                         </div>
                       </div>
@@ -528,13 +574,13 @@ export default function Home() {
           ) : (
             filteredProperties.map((p, index) => {
               // Parse main image URL
-              let mainImageUrl = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80';
+              let mainImageUrl = null;
               if (p.mainImage?.data) {
                 mainImageUrl = api.getImageUrl(p.mainImage.data.attributes.url);
               } else if (p.mainImageUrl) {
                 mainImageUrl = api.getImageUrl(p.mainImageUrl);
               } else if (p.mainImage) {
-                mainImageUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || mainImageUrl);
+                mainImageUrl = typeof p.mainImage === 'string' ? api.getImageUrl(p.mainImage) : api.getImageUrl(p.mainImage.url || null);
               }
 
               // Prefilled demo data visual placeholder resolution
@@ -542,13 +588,13 @@ export default function Home() {
                 if (val && String(val).trim() !== '') {
                   return { text: val, isDemo: false };
                 }
-                return { text: `${placeholder} (Demo)`, isDemo: true };
+                return { text: placeholder, isDemo: true };
               };
 
               const fLocation = resolveField(p.location, 'Kempanahalli, Bangalore');
               const fBedrooms = resolveField(p.bedrooms, '3');
               const fArea = resolveField(formatStartingArea(p.area), '1600 Sqft');
-              const fPrice = resolveField(formatStartingPrice(p.price), '1.69 Crores');
+              const fPrice = resolveField(formatStartingPrice(p.price, p.area), '1.69 Crores');
 
               return (
                 <div
@@ -556,22 +602,28 @@ export default function Home() {
                   className="bg-white rounded overflow-hidden border border-slate-150 flex flex-col h-full wp-card-shadow transition-all duration-300"
                 >
                   {/* Card Image */}
-                  <div className="h-56 relative overflow-hidden bg-slate-100">
-                    <Link to={`/property/${p.slug}`}>
-                      <img 
-                        src={mainImageUrl} 
-                        alt={p.title} 
-                        className="w-full h-full object-cover transition duration-500 hover:scale-105"
-                        loading="lazy"
-                      />
-                    </Link>
+                  <div className="h-56 relative overflow-hidden bg-slate-100 flex items-center justify-center border-b border-slate-100">
+                    {mainImageUrl ? (
+                      <Link to={`/property/${p.slug}`} className="w-full h-full">
+                        <img 
+                          src={mainImageUrl} 
+                          alt={p.title} 
+                          className="w-full h-full object-cover transition duration-500 hover:scale-105"
+                          loading="lazy"
+                        />
+                      </Link>
+                    ) : (
+                      <Link to={`/property/${p.slug}`} className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 select-none">
+                        <span className="text-[10px] font-bold uppercase tracking-wider">No Image Available</span>
+                      </Link>
+                    )}
                     <div className="absolute top-4 left-4">
-                      <span className="px-2 py-1 bg-slate-800 text-white text-[9px] font-bold uppercase tracking-wider rounded">
+                      <span className="px-2 py-1 bg-slate-800/80 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider rounded">
                         Featured
                       </span>
                     </div>
                     <div className="absolute top-4 right-4">
-                      <span className="px-2 py-1 bg-[#1ea69a] text-white text-[9px] font-bold uppercase tracking-wider rounded">
+                      <span className="px-2 py-1 bg-[#1ea69a]/80 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider rounded">
                         For Sale
                       </span>
                     </div>
