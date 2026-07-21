@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "cd ../frontend && npm install --include=dev && npm run build"
+    "build": "cd ../frontend && npm install --include=optional --include=dev && npm run build"
   },
   "dependencies": {
     "axios": "^1.7.2",
