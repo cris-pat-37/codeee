@@ -3,6 +3,14 @@ const path = require('path');
 
 module.exports = (config) => {
   return mergeConfig(config, {
+    build: {
+      rollupOptions: {
+        output: {
+          // Disable code-splitting chunks for admin plugins to keep AuthProvider & useRBAC in a single unified bundle
+          manualChunks: () => 'admin-main',
+        },
+      },
+    },
     resolve: {
       alias: {
         'react': path.resolve(__dirname, '../../node_modules/react'),
