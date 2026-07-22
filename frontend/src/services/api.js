@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' ? (window.location.port && window.location.port !== '80' && window.location.port !== '443' ? `${window.location.protocol}//${window.location.hostname}:5000` : window.location.origin) : 'http://localhost:5000');
-const STRAPI_URL = BACKEND_URL; // Point to the single consolidated server!
+const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || (typeof window !== 'undefined' ? (window.location.port && window.location.port !== '80' && window.location.port !== '443' ? `${window.location.protocol}//${window.location.hostname}:1337` : window.location.origin) : 'http://localhost:1337');
+const BACKEND_URL = STRAPI_URL; // Point both frontend endpoints to the single Strapi CMS server!
 
 const strapiClient = axios.create({
   baseURL: `${STRAPI_URL}/api`,
