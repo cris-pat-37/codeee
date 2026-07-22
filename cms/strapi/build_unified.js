@@ -20,13 +20,11 @@ function runCmd(cmd, cwd) {
 function copyFolderRecursiveSync(source, target) {
   let files = [];
 
-  // Check if folder needs to be created
   const targetFolder = target;
   if (!fs.existsSync(targetFolder)) {
     fs.mkdirSync(targetFolder, { recursive: true });
   }
 
-  // Copy
   if (fs.lstatSync(source).isDirectory()) {
     files = fs.readdirSync(source);
     files.forEach(function (file) {
@@ -44,6 +42,19 @@ function copyFolderRecursiveSync(source, target) {
 try {
   // 1. Build React Frontend Client
   console.log('\n--- 1. Building Frontend Client ---');
+  
+  // Clear cached Windows node_modules and lockfile on Render to force clean Linux bindings resolution
+  const fLock = path.join(frontendDir, 'package-lock.json');
+  const fModules = path.join(frontendDir, 'node_modules');
+  if (fs.existsSync(fLock)) {
+    console.log('Removing cached package-lock.json...');
+    fs.unlinkSync(fLock);
+  }
+  if (fs.existsSync(fModules)) {
+    console.log('Removing cached node_modules...');
+    fs.rmSync(fModules, { recursive: true, force: true });
+  }
+
   runCmd('npm install --include=dev --include=optional', frontendDir);
   runCmd('npm run build', frontendDir);
 
@@ -55,14 +66,12 @@ try {
     fs.mkdirSync(strapiPublicDir, { recursive: true });
   }
 
-  // Copy all assets except public/uploads (which contains our property photos)
   const items = fs.readdirSync(frontendDistDir);
   for (const item of items) {
     const srcPath = path.join(frontendDistDir, item);
     const destPath = path.join(strapiPublicDir, item);
     
     if (item === 'uploads') {
-      // Skip replacing uploads to protect property images
       continue;
     }
     
