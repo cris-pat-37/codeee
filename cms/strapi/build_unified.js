@@ -104,7 +104,12 @@ try {
 
   // 3. Build Strapi Admin Panel CMS
   console.log('\n--- 3. Building Strapi CMS Admin Panel ---');
-  runCmd('npm run build', rootDir);
+  
+  // Ensure Strapi's backend dependencies are fully installed on the server
+  runCmd('npm install', rootDir);
+  
+  // Compile Admin UI
+  runCmd('npx strapi build', rootDir);
 
   console.log('\n=== Unified Build Completed Successfully! ===');
 } catch (err) {
