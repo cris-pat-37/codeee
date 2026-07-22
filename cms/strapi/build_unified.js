@@ -43,7 +43,7 @@ try {
   // 1. Build React Frontend Client
   console.log('\n--- 1. Building Frontend Client ---');
   
-  // Clear cached Windows node_modules and lockfile on Render to force clean Linux bindings resolution
+  // Clear cached Windows node_modules and lockfile on Render
   const fLock = path.join(frontendDir, 'package-lock.json');
   const fModules = path.join(frontendDir, 'node_modules');
   if (fs.existsSync(fLock)) {
@@ -55,7 +55,18 @@ try {
     fs.rmSync(fModules, { recursive: true, force: true });
   }
 
+  // Install base dependencies
   runCmd('npm install --include=dev --include=optional', frontendDir);
+
+  // If running on Linux (Render), explicitly force install the Linux native binding to bypass npm bug
+  if (process.platform === 'linux') {
+    console.log('Detected Linux platform (Render). Explicitly installing native rolldown binding...');
+    runCmd('npm install @rolldown/binding-linux-x64-gnu --no-save', frontendDir);
+  } else {
+    console.log('Detected non-Linux platform. Skipping explicit Linux binding installation.');
+  }
+
+  // Compile React Frontend
   runCmd('npm run build', frontendDir);
 
   // 2. Prepare Strapi Public Directory
