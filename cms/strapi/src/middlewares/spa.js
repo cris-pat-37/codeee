@@ -4,34 +4,35 @@ const path = require('path');
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     const publicDir = strapi.dirs.static.public;
+    const acceptHeader = ctx.headers.accept || '';
 
-    // 1. Intercept root "/" GET requests and serve index.html directly to bypass default admin redirect
-    if (ctx.method === 'GET' && ctx.path === '/') {
-      try {
-        const indexPath = path.join(publicDir, 'index.html');
-        if (fs.existsSync(indexPath)) {
-          ctx.type = 'html';
-          ctx.body = fs.readFileSync(indexPath);
-          return;
+    // Only intercept GET requests that explicitly accept HTML (browser page navigations)
+    if (ctx.method === 'GET' && acceptHeader.includes('text/html')) {
+      const urlPath = ctx.path;
+
+      // 1. Intercept root "/" GET requests and serve index.html directly to bypass default admin redirect
+      if (urlPath === '/') {
+        try {
+          const indexPath = path.join(publicDir, 'index.html');
+          if (fs.existsSync(indexPath)) {
+            ctx.type = 'html';
+            ctx.body = fs.readFileSync(indexPath);
+            return;
+          }
+        } catch (err) {
+          strapi.log.error(`SPA Middleware Root Error: ${err.message}`);
         }
-      } catch (err) {
-        strapi.log.error(`SPA Middleware Root Error: ${err.message}`);
       }
     }
 
     await next();
 
-    // 2. Catch 404s for client React Router routes
-    if (ctx.status === 404 && ctx.method === 'GET') {
+    // 2. Catch 404s for client React Router routes (only for browser HTML page requests)
+    if (ctx.status === 404 && ctx.method === 'GET' && acceptHeader.includes('text/html')) {
       const urlPath = ctx.path;
 
-      if (
-        !urlPath.startsWith('/api') &&
-        !urlPath.startsWith('/admin') &&
-        !urlPath.startsWith('/content-manager') &&
-        !urlPath.startsWith('/content-type-builder') &&
-        !urlPath.includes('.')
-      ) {
+      // Never intercept actual Strapi admin or core API paths
+      if (!urlPath.startsWith('/api') && !urlPath.startsWith('/admin')) {
         try {
           const indexPath = path.join(publicDir, 'index.html');
           if (fs.existsSync(indexPath)) {
