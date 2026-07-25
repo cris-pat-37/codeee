@@ -9,6 +9,7 @@ module.exports = {
   async bootstrap({ strapi }) {
     console.log('Running Strapi bootstrap script...');
 
+
     try {
       // 3. Configure placeholders and descriptions in Strapi's Content Manager
       console.log('Configuring placeholders and descriptions in Content Manager...');
