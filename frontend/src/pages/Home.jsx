@@ -14,95 +14,114 @@ import 'swiper/css/pagination';
 
 export default function Home() {
   const extractAreaNumber = (areaStr) => {
-    if (!areaStr) return 0;
+    if (!areaStr) return 1200;
     const str = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '').replace(/–/g, '-').replace(/\s*to\s*/g, '-');
     const match = str.match(/(\d{3,5})/);
     if (match) {
       return parseFloat(match[1]);
     }
-    return 0;
+    return 1200;
+  };
+
+  const formatStartingArea = (areaStr) => {
+    if (!areaStr) return '1,200 Sq.ft Onwards';
+    let str = areaStr.trim();
+    
+    // Check if it represents Acres
+    const isAcre = str.toLowerCase().includes('acre');
+    if (isAcre) {
+      const acreMatch = str.match(/(\d+(?:\.\d+)?)\s*acre/i) || str.match(/(\d+(?:\.\d+)?)/);
+      if (acreMatch) {
+        return `${acreMatch[1]} Acres`;
+      }
+      return str;
+    }
+    
+    // Clean BHK indicators
+    const strCleaned = str.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bhl|bhr|hk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '');
+    let cleanStr = strCleaned.replace(/–/g, '-').replace(/\s*to\s*/g, '-');
+    cleanStr = cleanStr.replace(/\d{2}\s*[\*xX]\s*\d{2}/g, '');
+    
+    // Find numbers (3 to 5 digits for sqft per rules.md)
+    const match = cleanStr.match(/(\d{3,5})/);
+    if (match) {
+      const val = parseInt(match[1], 10);
+      const isRange = areaStr.toLowerCase().includes('to') || areaStr.toLowerCase().includes('-') || areaStr.toLowerCase().includes('or') || areaStr.toLowerCase().includes('+') || areaStr.toLowerCase().includes('onwards');
+      return isRange ? `${val.toLocaleString()} Sq.ft Onwards` : `${val.toLocaleString()} Sq.ft Onwards`;
+    }
+    
+    // Small numbers (< 300) without acre label
+    const smallMatch = cleanStr.match(/(\d+(?:\.\d+)?)/);
+    if (smallMatch) {
+      const smallVal = parseFloat(smallMatch[1]);
+      if (smallVal > 0 && smallVal < 300) {
+        return `${smallVal} Acres`;
+      }
+    }
+    
+    return areaStr;
   };
 
   const formatStartingPrice = (priceStr, areaStr) => {
-    if (!priceStr) return '';
-    const str = priceStr.toLowerCase();
-    if (str.includes('request')) return 'Price on Request';
+    if (!priceStr) return 'Price on Request';
+    const str = priceStr.toLowerCase().trim();
+    if (str.includes('request') || str === '0' || str === '0.0') return 'Price on Request';
     
-    // Check if it's a rate per sq.ft and we need to multiply it by the area
-    const isRate = str.includes('per sq') || str.includes('/sq') || str.includes('rate');
-    if (isRate) {
-      const rateMatch = str.match(/(?:rate|rs\.?)?\s*(\d+(?:,\d+)?)(?:\/-)?\s*(?:per|\/)\s*sq/i) || str.match(/(\d+(?:,\d+)?)\s*(?:per|\/)\s*sq/i) || str.match(/(\d{4,5})/);
+    // Rate per sq.ft multiplication per rules.md Rule 4
+    if (str.includes('per sq') || str.includes('/sq') || str.includes('rate')) {
+      const rateMatch = str.match(/(?:rate|rs\.?|₹)?\s*(\d+(?:,\d+)?)(?:\/-)?\s*(?:per|\/)\s*sq/i) || str.match(/(\d{4,6})/);
       if (rateMatch) {
         const rate = parseFloat(rateMatch[1].replace(/,/g, ''));
-        if (rate > 0) {
-          const areaNum = extractAreaNumber(areaStr);
-          if (areaNum > 0) {
-            const total = rate * areaNum;
-            const formattedVal = total >= 10000000 
-              ? parseFloat((total / 10000000).toFixed(2)) + " Cr"
-              : parseFloat((total / 100000).toFixed(2)) + " Lakh";
-            return `${formattedVal} Onwards`;
+        const areaNum = extractAreaNumber(areaStr) || 1200;
+        if (rate > 0 && areaNum > 0) {
+          const total = rate * areaNum;
+          if (total >= 10000000) {
+            return `₹${(total / 10000000).toFixed(2).replace(/\.00$/, '')} Cr Onwards`;
+          } else if (total >= 100000) {
+            return `₹${(total / 100000).toFixed(2).replace(/\.00$/, '')} Lakhs Onwards`;
           }
         }
       }
     }
     
-    // Find all matches for prices in crores or lakhs (e.g. Rs 2.799 cr)
-    const regex = /(?:rs\.?\s*)?(\d+(?:\.\d+)?)\s*(?:cr|crore|crores|lakh|lakhs|lakh\s*\+)/g;
-    let matches = [];
-    let match;
-    while ((match = regex.exec(str)) !== null) {
-      const val = parseFloat(match[1]);
-      const isLakh = match[0].includes('lakh');
-      matches.push({
-        value: val,
-        isLakh: isLakh,
-        text: isLakh 
-          ? `${parseFloat(val.toFixed(2))} Lakh` 
-          : `${parseFloat(val.toFixed(2))} Cr`
-      });
+    // Parse Cr
+    const crMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:cr|crore|crores)/i);
+    if (crMatch) {
+      const val = parseFloat(crMatch[1]);
+      return `₹${val} Cr Onwards`;
     }
     
-    if (matches.length > 0) {
-      matches.sort((a, b) => {
-        const valA = a.isLakh ? a.value : a.value * 100;
-        const valB = b.isLakh ? b.value : b.value * 100;
-        return valA - valB;
-      });
-      return `${matches[0].text} Onwards`;
+    // Parse Lakhs
+    const lakhMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:lakh|lakhs|l)/i);
+    if (lakhMatch) {
+      const val = parseFloat(lakhMatch[1]);
+      if (val >= 100) {
+        return `₹${(val / 100).toFixed(2).replace(/\.00$/, '')} Cr Onwards`;
+      }
+      return `₹${val} Lakhs Onwards`;
     }
     
-    let cleanStr = priceStr.replace(/\s*onwards\s*/i, '').replace(/\+$/, '').trim();
-    if (cleanStr.includes(',')) {
-      cleanStr = cleanStr.split(',')[0].trim();
+    if (str.startsWith('₹') || str.startsWith('rs')) {
+      let clean = priceStr.replace(/^rs\.?\s*/i, '₹').trim();
+      if (!clean.includes('Onwards') && !clean.includes('Request')) {
+        clean += ' Onwards';
+      }
+      return clean;
     }
-    return `${cleanStr} Onwards`;
-  };
-
-  const formatStartingArea = (areaStr) => {
-    if (!areaStr) return '';
-    // Clean BHK and other layouts including typos like bhl or bhr
-    const strCleaned = areaStr.toLowerCase().replace(/\d+(?:\.\d+)?\s*(?:bhk|bhl|bhr|hk|bed|bedroom|villas|villa|apts|apt|apartments)/gi, '');
-    let str = strCleaned.replace(/–/g, '-').replace(/\s*to\s*/g, '-');
     
-    // Strip plot dimensions like 30*40 or 30*50
-    str = str.replace(/\d{2}\s*[\*x]\s*\d{2}/g, '');
-    
-    // Enforce 3 to 5 digits only to avoid matching single configuration digit types
-    const regex = /(\d{3,5})\s*(?:sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)?/i;
-    const match = str.match(regex);
-    if (match) {
-      const val = match[1];
-      const unitMatch = str.match(/(sq\.?ft|sqft|sft|sq\s*meters|sq\s*yds|square\s*feet|plot\s*sq\.?ft)/i);
-      const unit = unitMatch ? unitMatch[0] : 'Sq.ft';
-      let displayUnit = 'Sq.ft';
-      if (unit.toLowerCase().includes('meter')) displayUnit = 'Sq.m';
-      if (unit.toLowerCase().includes('yd')) displayUnit = 'Sq.yds';
-      
-      const isRange = areaStr.toLowerCase().includes('to') || areaStr.toLowerCase().includes('-') || areaStr.toLowerCase().includes('or') || areaStr.toLowerCase().includes('+');
-      return isRange ? `${val} ${displayUnit} Onwards` : `${val} ${displayUnit}`;
+    const numMatch = str.match(/(\d+(?:\.\d+)?)/);
+    if (numMatch) {
+      const val = parseFloat(numMatch[1]);
+      if (val >= 10000000) {
+        return `₹${(val / 10000000).toFixed(2).replace(/\.00$/, '')} Cr Onwards`;
+      } else if (val >= 100000) {
+        return `₹${(val / 100000).toFixed(2).replace(/\.00$/, '')} Lakhs Onwards`;
+      } else if (val > 0 && val < 100) {
+        return `₹${val} Cr Onwards`;
+      }
     }
-    return areaStr;
+    
+    return priceStr;
   };
 
   const [properties, setProperties] = useState([]);
@@ -630,22 +649,22 @@ export default function Home() {
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
-                      <h3 className="text-base font-bold text-[#333333] hover:text-[#1ea69a] tracking-tight line-clamp-1 transition">
+                      <h3 className="text-base font-bold text-[#333333] hover:text-[#1ea69a] tracking-tight line-clamp-1 h-6 overflow-hidden transition">
                         <Link to={`/property/${p.slug}`}>{p.title}</Link>
                       </h3>
-                      <p className={`text-xs flex items-center ${fLocation.isDemo ? 'text-slate-400 italic' : 'text-slate-500'}`}>
+                      <p className={`text-xs flex items-center line-clamp-1 h-5 overflow-hidden ${fLocation.isDemo ? 'text-slate-400 italic' : 'text-slate-600 font-medium'}`}>
                         <BiMapPin className="text-[#1ea69a] mr-1 text-sm shrink-0" />
                         {fLocation.text}
                       </p>
-                      <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 pt-2 border-t border-slate-100">
-                        {p.shortDescription || 'A premium residential project configured with spacious BHK options, modern amenities, and prime connectivity.'}
+                      <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 h-10 overflow-hidden pt-1 border-t border-slate-100">
+                        {p.shortDescription || p.description || 'A premium residential project configured with spacious BHK options, modern amenities, and prime connectivity.'}
                       </p>
                     </div>
 
                     {/* Configuration Specs */}
-                    <div className="flex gap-4 text-xs text-slate-600">
+                    <div className="flex gap-4 text-xs text-slate-600 pt-1">
                       <span className={`flex items-center gap-1 ${fBedrooms.isDemo ? 'text-slate-400 italic' : ''}`}>
                         <BiBed className="text-slate-400 text-sm" />
                         {fBedrooms.text} BHK
@@ -659,7 +678,9 @@ export default function Home() {
                     {/* Price and Action Button */}
                     <div className="border-t border-slate-100 pt-3 flex justify-between items-center">
                       <div>
-                        <p className={`font-bold text-base ${fPrice.isDemo ? 'text-teal-500/60 italic font-normal' : 'text-[#1ea69a]'}`}>₹{fPrice.text}</p>
+                        <p className={`font-bold text-base ${fPrice.isDemo ? 'text-teal-500/60 italic font-normal' : 'text-[#1ea69a]'}`}>
+                          {fPrice.text.startsWith('₹') || fPrice.text.includes('Request') ? fPrice.text : `₹${fPrice.text}`}
+                        </p>
                       </div>
                       <Link 
                         to={`/property/${p.slug}`}
