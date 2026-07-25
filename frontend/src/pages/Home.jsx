@@ -271,6 +271,15 @@ export default function Home() {
 
   // Filter listings
   const filteredProperties = properties.filter(p => {
+    // ALWAYS EXCLUDE ARCHIVED OR JUNK ENTRIES
+    if (
+      p.status?.toLowerCase() === 'archived' ||
+      p.title?.toLowerCase().includes('archived') ||
+      p.propertyType?.toLowerCase() === 'archived'
+    ) {
+      return false;
+    }
+
     const matchesKeyword = 
       !keyword || 
       p.title?.toLowerCase().includes(keyword.toLowerCase()) || 
