@@ -1,74 +1,143 @@
 import axios from 'axios';
 
-const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || (typeof window !== 'undefined' ? (window.location.port && window.location.port !== '80' && window.location.port !== '443' ? `${window.location.protocol}//${window.location.hostname}:1337` : window.location.origin) : 'http://localhost:1337');
-const BACKEND_URL = STRAPI_URL; // Point both frontend endpoints to the single Strapi CMS server!
+// Supabase REST API configuration
+const SUPABASE_URL = 'https://nwlsuypykquxqqymtvuk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bHN1eXB5a3F1eHFxeW10dnVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3NDk4MjQsImV4cCI6MjEwMDMyNTgyNH0.1WrpPgEQVpsOts6VxyQqKj8OZEnsAeA0Vhgi6SD2Xo4';
 
-const strapiClient = axios.create({
-  baseURL: `${STRAPI_URL}/api`,
-  timeout: 10000,
+const supabaseClient = axios.create({
+  baseURL: `${SUPABASE_URL}/rest/v1`,
+  timeout: 15000,
+  headers: {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+  }
 });
+
+// Backend URL for lead form submissions (falls back gracefully)
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5000');
 
 const backendClient = axios.create({
   baseURL: `${BACKEND_URL}/api`,
   timeout: 10000,
 });
 
+// Normalize Supabase snake_case fields to camelCase for frontend components
+const normalizeProperty = (p) => ({
+  ...p,
+  // Map snake_case DB fields to camelCase frontend fields
+  propertyType: p.property_type || p.propertyType || '',
+  builderName: p.builder_name || p.builderName || '',
+  reraNumber: p.rera_no || p.reraNumber || '',
+  price: p.price_display || p.price || '',
+  area: p.area_display || p.area || '',
+  areaSqft: p.area_sqft || p.areaSqft || 0,
+  shortDescription: p.description || p.shortDescription || '',
+  longDescription: p.description || p.longDescription || '',
+  projectStatus: p.status === 'For Sale' ? 'Under Construction' : (p.projectStatus || p.status || ''),
+  possessionDate: p.completion_date || p.possessionDate || '',
+  mainImageUrl: p.image_url || p.mainImageUrl || '',
+  image_url: p.image_url || '',
+  gallery: p.gallery || [],
+  galleryImageUrls: p.gallery || [],
+  brochureUrl: p.brochure_url || p.brochureUrl || '',
+  youtubeVideo: p.video_url || p.youtubeVideo || '',
+  floorPlanUrl: p.floor_plan_url || p.floorPlanUrl || '',
+  configuration: p.configuration || '',
+  furnishing: p.furnishing || '',
+  parking: p.parking || '',
+  amenities: p.amenities || [],
+  variants: p.variants || [],
+  agentName: p.agent_name || p.agentName || '',
+  agentPhone: p.agent_phone || p.agentPhone || '',
+  agentEmail: p.agent_email || p.agentEmail || '',
+});
+
 export const api = {
-  // Get single property details by slug
-  getPropertyBySlug: async (slug) => {
-    try {
-      // populate=* gets all relations and media fields (images, brochure, etc.)
-      const response = await strapiClient.get(`/properties?filters[slug][$eq]=${slug}&populate=*`);
-      // Strapi returns data wrap, usually { data: [ { id: 1, attributes: {...} } ] }
-      // Or in Strapi v4/v5, response.data.data contains the list
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching property by slug: ${error.message}`);
-      throw error;
-    }
-  },
-
-  // Get similar properties (same property type or same location)
-  getSimilarProperties: async (propertyType, location, currentSlug) => {
-    try {
-      // In Strapi, we can search by type or location
-      // Let's search properties of the same type OR location, excluding current property, limit to 4
-      const city = location.split(',').pop()?.trim() || location;
-      
-      const response = await strapiClient.get(
-        `/properties?filters[slug][$ne]=${currentSlug}&filters[$or][0][propertyType][$eq]=${propertyType}&filters[$or][1][location][$contains]=${city}&pagination[limit]=4&populate=*`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching similar properties: ${error.message}`);
-      // Fallback to empty array instead of failing
-      return { data: [] };
-    }
-  },
-
-  // Fetch all properties (catalog/listings)
+  // Fetch all active properties from Supabase
   getAllProperties: async () => {
     try {
-      const response = await strapiClient.get('/properties?populate=*&pagination[limit]=100');
-      return response.data;
+      const response = await supabaseClient.get('/properties', {
+        params: {
+          select: '*',
+          status: 'neq.DELETED',
+          order: 'featured.desc,created_at.desc'
+        }
+      });
+      // Filter out archived properties and normalize
+      const filtered = (response.data || []).filter(p => 
+        p.status !== 'Archived' && 
+        p.status !== 'DELETED' && 
+        !String(p.title || '').includes('Archived') &&
+        !String(p.title || '').includes('DELETED')
+      ).map(normalizeProperty);
+      return { data: filtered };
     } catch (error) {
       console.error(`Error fetching all properties: ${error.message}`);
       throw error;
     }
   },
 
-  // Submit Lead Form to Express Backend
+  // Get single property details by slug from Supabase
+  getPropertyBySlug: async (slug) => {
+    try {
+      const response = await supabaseClient.get('/properties', {
+        params: {
+          select: '*',
+          slug: `eq.${slug}`
+        }
+      });
+      const normalized = (response.data || []).map(normalizeProperty);
+      return { data: normalized };
+    } catch (error) {
+      console.error(`Error fetching property by slug: ${error.message}`);
+      throw error;
+    }
+  },
+
+  // Get similar properties (same property type or location)
+  getSimilarProperties: async (propertyType, location, currentSlug) => {
+    try {
+      const response = await supabaseClient.get('/properties', {
+        params: {
+          select: '*',
+          slug: `neq.${currentSlug}`,
+          status: 'neq.DELETED',
+          limit: 8,
+          order: 'featured.desc'
+        }
+      });
+      const city = location?.split(',').pop()?.trim() || '';
+      const filtered = (response.data || []).filter(p =>
+        p.status !== 'Archived' &&
+        !String(p.title || '').includes('Archived') &&
+        (p.property_type === propertyType || (city && String(p.location || '').includes(city)))
+      ).map(normalizeProperty).slice(0, 4);
+      return { data: filtered };
+    } catch (error) {
+      console.error(`Error fetching similar properties: ${error.message}`);
+      return { data: [] };
+    }
+  },
+
+  // Submit Lead Form
   submitLead: async (leadData) => {
     try {
       const response = await backendClient.post('/leads', leadData);
       return response.data;
     } catch (error) {
-      console.error(`Error submitting lead form: ${error.message}`);
-      throw error.response?.data || new Error('Failed to submit enquiry. Please try again.');
+      // Fallback: insert lead directly into Supabase
+      try {
+        const supabaseResponse = await supabaseClient.post('/leads', leadData);
+        return supabaseResponse.data;
+      } catch (supaErr) {
+        console.error(`Error submitting lead form: ${error.message}`);
+        throw error.response?.data || new Error('Failed to submit enquiry. Please try again.');
+      }
     }
   },
 
-  // Helper to format image URLs (serving uploads from high-speed GitHub Raw CDN)
+  // Helper to format image URLs (serving uploads from GitHub Raw CDN)
   getImageUrl: (imagePath) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
