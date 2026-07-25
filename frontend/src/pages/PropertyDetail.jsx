@@ -458,14 +458,20 @@ export default function PropertyDetail() {
 
   // Dynamic Image resolution (Local CMS assets vs Absolute crawled URLs)
   let mainImageUrl = null;
-  if (property?.mainImage?.data) {
+  if (property?.image_url) {
+    mainImageUrl = api.getImageUrl(property.image_url);
+  } else if (property?.mainImage?.data) {
     mainImageUrl = api.getImageUrl(property.mainImage.data.attributes.url);
   } else if (property?.mainImageUrl) {
     mainImageUrl = api.getImageUrl(property.mainImageUrl);
+  } else if (property?.mainImage) {
+    mainImageUrl = typeof property.mainImage === 'string' ? api.getImageUrl(property.mainImage) : api.getImageUrl(property.mainImage.url || null);
   }
 
   let galleryUrls = [];
-  if (property?.galleryImages?.data) {
+  if (property?.gallery && Array.isArray(property.gallery) && property.gallery.length > 0) {
+    galleryUrls = property.gallery.map(url => api.getImageUrl(url));
+  } else if (property?.galleryImages?.data) {
     galleryUrls = property.galleryImages.data.map(img => api.getImageUrl(img.attributes.url));
   } else if (property?.galleryImageUrls && Array.isArray(property.galleryImageUrls)) {
     galleryUrls = property.galleryImageUrls.map(url => api.getImageUrl(url));
