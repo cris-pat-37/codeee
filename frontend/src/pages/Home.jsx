@@ -603,7 +603,9 @@ export default function Home() {
             filteredProperties.map((p, index) => {
               // Parse main image URL
               let mainImageUrl = null;
-              if (p.mainImage?.data) {
+              if (p.image_url) {
+                mainImageUrl = api.getImageUrl(p.image_url);
+              } else if (p.mainImage?.data) {
                 mainImageUrl = api.getImageUrl(p.mainImage.data.attributes.url);
               } else if (p.mainImageUrl) {
                 mainImageUrl = api.getImageUrl(p.mainImageUrl);
