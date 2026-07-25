@@ -68,12 +68,13 @@ export const api = {
     }
   },
 
-  // Helper to format Strapi image URLs
+  // Helper to format image URLs (serving uploads from high-speed GitHub Raw CDN)
   getImageUrl: (imagePath) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
-    return `${STRAPI_URL}${imagePath}`;
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public${cleanPath}`;
   }
 };
