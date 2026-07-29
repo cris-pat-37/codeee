@@ -18,8 +18,8 @@ This file tracks all explicit development, styling, and database seeding rules e
 *   **No Placeholders:** If a property has no rendering images in the local folder, keep the main image rendering blank (empty rendering, no static or Unsplash placeholders).
 
 ### 3. Price & Area Range Formatting
-*   **No Ranges Anywhere:** Never display size ranges (e.g. `1900 to 2500 Sq.ft`) or price ranges (e.g. `₹0.95 Cr - 1.05 Cr`) on the website (including homepage cards and details pages).
-*   **Starting Value + Onwards:** If a range or multiple layouts are present, format it by extracting the **minimum starting value** followed by **`Onwards`** (e.g. `1900 Sq.ft Onwards`, `₹0.95 Cr Onwards`).
+*   **STRICT NO-RANGE POLICY FOR ALL PROPERTIES (INCLUDING UPCOMING 50+ LISTINGS):** Never display size ranges (e.g., `3550 - 5600 sq.ft.` or `1900 to 2500 Sq.ft`) or price ranges (e.g., `Rs.4.5 Cr and above` or `₹0.95 Cr - 1.05 Cr`) on cards or detail pages.
+*   **Format Pattern:** Extract the minimum starting value and format strictly as **`{Starting Value} Sq.ft Onwards`** (e.g., `3,550 Sq.ft Onwards`) and **`₹{Starting Price} Cr Onwards`** (e.g., `₹4.5 Cr Onwards`).
 *   **Plot Dimension Stripping:** Strip plot dimensions (e.g. `30*40` or `30*50`) from area strings before matching size to prevent layout cards from showing plot sizes instead of built-up areas (e.g. showing `2650 Sq.ft Onwards` instead of `30*40 Sq.ft Onwards`).
 *   **3-to-5 Digit Area Limit:** Enforce a `\d{3,5}` match length on the area extractor pattern. This prevents matching configuration indicators (like `3 BHK` or `5 series`) as square footage sizes.
 
