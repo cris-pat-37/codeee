@@ -269,13 +269,17 @@ export default function Home() {
     return parts.pop()?.trim() || p.location;
   }).filter(Boolean))];
 
-  // Filter listings
+  // Filter listings (supports both snake_case Supabase fields and camelCase normalized fields)
   const filteredProperties = properties.filter(p => {
-    // ALWAYS EXCLUDE ARCHIVED OR JUNK ENTRIES
+    // ALWAYS EXCLUDE ARCHIVED, DELETED OR JUNK ENTRIES
+    const pType = p.propertyType || p.property_type || '';
+    const pStatus = p.projectStatus || p.status || '';
     if (
-      p.status?.toLowerCase() === 'archived' ||
+      pStatus.toLowerCase() === 'archived' ||
+      pStatus.toLowerCase() === 'deleted' ||
       p.title?.toLowerCase().includes('archived') ||
-      p.propertyType?.toLowerCase() === 'archived'
+      p.title?.toLowerCase().includes('deleted') ||
+      pType.toLowerCase() === 'archived'
     ) {
       return false;
     }
@@ -284,12 +288,13 @@ export default function Home() {
       !keyword || 
       p.title?.toLowerCase().includes(keyword.toLowerCase()) || 
       p.location?.toLowerCase().includes(keyword.toLowerCase()) ||
-      p.shortDescription?.toLowerCase().includes(keyword.toLowerCase());
+      (p.shortDescription || p.description || '').toLowerCase().includes(keyword.toLowerCase()) ||
+      (p.builder_name || p.builderName || '').toLowerCase().includes(keyword.toLowerCase());
       
     const matchesId = 
       !propertyId || 
       String(p.id).includes(propertyId) ||
-      (p.reraNumber && p.reraNumber.toLowerCase().includes(propertyId.toLowerCase()));
+      ((p.reraNumber || p.rera_no || '').toLowerCase().includes(propertyId.toLowerCase()));
       
     const matchesLocation = 
       location === 'All' || 
@@ -297,11 +302,11 @@ export default function Home() {
       
     const matchesType = 
       propertyType === 'All' || 
-      p.propertyType?.toLowerCase() === propertyType.toLowerCase();
+      pType.toLowerCase() === propertyType.toLowerCase();
 
     const matchesStatus = 
       projectStatus === 'All' || 
-      p.projectStatus?.toLowerCase().includes(projectStatus.toLowerCase());
+      pStatus.toLowerCase().includes(projectStatus.toLowerCase());
 
     return matchesKeyword && matchesId && matchesLocation && matchesType && matchesStatus;
   });
