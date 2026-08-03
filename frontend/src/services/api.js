@@ -51,6 +51,9 @@ const normalizeProperty = (p) => ({
     { title: 'Typical Floor Plan (Tower G)', size: 'Tower G Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-tower-g.jpg' },
     { title: 'Typical Floor Plan (Tower H)', size: 'Tower H Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-tower-h.jpg' },
     { title: '10.5 Acre Master Plan', size: '10.5 Acres Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-master-plan.jpg' }
+  ] : (p.slug === 'elixir' || p.title === 'DSR Elixir' || p.title === 'Elixir') ? [
+    { title: '4 BHK Villa Floor Plan', size: '2,705 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/elixir-fp-4bhk.jpg' },
+    { title: '21.11 Acre Master Layout', size: '21.11 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/elixir-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
