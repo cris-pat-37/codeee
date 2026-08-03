@@ -41,6 +41,10 @@ This file tracks all explicit development, styling, and database seeding rules e
 *   **Local Asset Resolution:** Mapped layout files in the Floor Plans tab must load correct local assets (pre-pended correctly with `api.getImageUrl`).
 *   **Hide Floor Plans Section:** If a property does not have floor plan layouts in its folder, hide the Floor Plans section entirely.
 
+### 8. Unit Variants Scope & Facings Constraint
+*   **No Facing / Series Variant Duplicates:** Facings (e.g. East Facing, West Facing, North Facing, Series 1, Series 2) must NOT be created as separate variant cards if the size and price are identical. Keep ONLY distinct BHK configurations (e.g., `2 BHK` and `3 BHK`).
+*   **Buyable Units Only:** Unit variants must contain only buyable apartment/villa unit configurations. Architectural maps like "Typical Floor Plan (Tower G)" or "Master Plan" belong exclusively in the Floor Plans tab viewer, never as variant cards.
+
 ---
 
 ## 🛠️ Verification Checklist
