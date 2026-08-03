@@ -54,6 +54,14 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'elixir' || p.title === 'DSR Elixir' || p.title === 'Elixir') ? [
     { title: '4 BHK Villa Floor Plan', size: '2,705 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/elixir-fp-4bhk.jpg' },
     { title: '21.11 Acre Master Layout', size: '21.11 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/elixir-master-plan.jpg' }
+  ] : (p.slug === 'mea-meadows' || p.title === 'Mea & Meadows') ? [
+    { title: '3 BHK Floor Plan', size: '2,061 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mea-meadows-fp-3bhk.jpg' },
+    { title: '4 BHK Floor Plan', size: '3,244 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mea-meadows-fp-4bhk.jpg' },
+    { title: '87% Open Space Master Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mea-meadows-master-plan.jpg' }
+  ] : (p.slug === 'mizumi-reserve' || p.title === 'Mizumi Reserve') ? [
+    { title: '3 BHK Floor Plan', size: '1,900 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-fp-3bhk.jpg' },
+    { title: '4 BHK Floor Plan', size: '2,500 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-fp-4bhk.jpg' },
+    { title: '80-Acre Master Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
