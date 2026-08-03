@@ -43,7 +43,15 @@ const normalizeProperty = (p) => ({
   brochureUrl: p.brochure_url || p.brochureUrl || '',
   youtubeVideo: p.video_url || p.youtubeVideo || '',
   floorPlanUrl: p.floor_plan_url || p.floorPlanUrl || '',
-  floorPlans: (p.floor_plans && p.floor_plans.length > 0)
+  floorPlans: (p.slug === 'ajmeera-marina' || p.title === 'Ajmeera Marina') ? [
+    { title: '2 BHK Floor Plan', size: '1,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-2bhk.jpg' },
+    { title: '3 BHK Series 1 (West Facing)', size: '1,600 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-3bhk-west.jpg' },
+    { title: '3 BHK Series 2', size: '1,600 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-3bhk-s2.jpg' },
+    { title: '3 BHK Series 3 (East Facing)', size: '1,600 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-3bhk-east.jpg' },
+    { title: 'Typical Floor Plan (Tower G)', size: 'Tower G Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-tower-g.jpg' },
+    { title: 'Typical Floor Plan (Tower H)', size: 'Tower H Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-tower-h.jpg' },
+    { title: '10.5 Acre Master Plan', size: '10.5 Acres Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-master-plan.jpg' }
+  ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
       ? p.variants.filter(v => v.image || v.floor_plan_url).map(v => ({
