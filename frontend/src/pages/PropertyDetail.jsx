@@ -705,12 +705,26 @@ export default function PropertyDetail() {
                       <p className="text-[11px] text-slate-500 mt-0.5">Download full floor plans and pricing guide PDF</p>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => setBrochureModalOpen(true)}
-                    className="w-full py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-bold transition duration-300 text-xs shadow-sm text-center cursor-pointer"
-                  >
-                    Download Brochure
-                  </button>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setBrochureModalOpen(true)}
+                      className="flex-1 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-lg font-bold transition duration-300 text-xs shadow-sm text-center cursor-pointer"
+                    >
+                      Download Brochure
+                    </button>
+                    {property?.brochureUrl && (
+                      <a 
+                        href={property.brochureUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold transition duration-300 text-xs text-center border border-slate-200 shrink-0 flex items-center justify-center gap-1"
+                        title="View PDF Brochure directly"
+                      >
+                        <BiDownload className="text-teal-600" />
+                        View PDF
+                      </a>
+                    )}
+                  </div>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200/80 flex flex-col justify-between gap-4">

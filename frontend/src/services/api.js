@@ -43,6 +43,15 @@ const normalizeProperty = (p) => ({
   brochureUrl: p.brochure_url || p.brochureUrl || '',
   youtubeVideo: p.video_url || p.youtubeVideo || '',
   floorPlanUrl: p.floor_plan_url || p.floorPlanUrl || '',
+  floorPlans: (p.floor_plans && p.floor_plans.length > 0)
+    ? p.floor_plans
+    : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
+      ? p.variants.filter(v => v.image || v.floor_plan_url).map(v => ({
+          title: v.name || `${v.bhk} Layout`,
+          size: v.area_display || v.size || '',
+          image: v.image || v.floor_plan_url || ''
+        }))
+      : (p.floor_plan_url ? [{ title: 'Master Floor Plan', size: p.area_display || '', image: p.floor_plan_url }] : []),
   configuration: p.configuration || '',
   furnishing: p.furnishing || '',
   parking: p.parking || '',
