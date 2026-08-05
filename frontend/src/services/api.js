@@ -89,6 +89,17 @@ const normalizeProperty = (p) => ({
     { title: '2 BHK Unit Plan', size: '1,190 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-fp-2bhk.jpg' },
     { title: '3 BHK Premium Unit Plan', size: '1,887 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-fp-3bhk.jpg' },
     { title: '7-Acre Master Layout', size: '7 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-master-plan.jpg' }
+  ] : (p.slug === 'azur' || p.title === 'Azur') ? [
+    { title: '3 BHK Floor Plan', size: '1,265 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/azur-fp-3bhk.jpg' },
+    { title: '4 BHK Floor Plan', size: '1,900 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/azur-fp-4bhk.jpg' },
+    { title: '10-Acre Master Layout', size: '10 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/azur-master-plan.jpg' }
+  ] : (p.slug === 'hevan' || p.title === 'Hevan') ? [
+    { title: '3 BHK Floor Plan', size: '1,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-fp-3bhk.jpg' },
+    { title: '3.5 BHK + Study Floor Plan', size: '1,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-fp-3bhk-study.jpg' },
+    { title: '12-Acre Master Layout', size: '12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-master-plan.jpg' }
+  ] : (p.slug === 'lodha-mirabelle' || p.title === 'Lodha Mirabelle') ? [
+    { title: '3 BHK Luxe Floor Plan (Dual Sundecks)', size: '2,000 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-3bhk.jpg' },
+    { title: '3.5 BHK Floor Plan', size: '2,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-4bhk.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
