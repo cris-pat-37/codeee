@@ -81,6 +81,14 @@ const normalizeProperty = (p) => ({
     { title: '4 BHK Luxury Villa (2,650 Sq.ft)', size: '2,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' },
     { title: '4 BHK Grand Villa (3,205 Sq.ft)', size: '3,205 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' },
     { title: '13.5-Acre Villa Township Layout', size: '13.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' }
+  ] : (p.slug === 'godrej-vanantaara' || p.title === 'Godrej Vanantaara') ? [
+    { title: 'Tower A Floor Plan', size: '1,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-vanantaara-fp-ta.jpg' },
+    { title: 'Tower B Floor Plan', size: '2,150 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-vanantaara-fp-tb.jpg' },
+    { title: '10-Acre Master Layout', size: '10 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-vanantaara-master-plan.jpg' }
+  ] : (p.slug === 'godrej-woods' || p.title === 'Godrej Woods') ? [
+    { title: '2 BHK Unit Plan', size: '1,190 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-fp-2bhk.jpg' },
+    { title: '3 BHK Premium Unit Plan', size: '1,887 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-fp-3bhk.jpg' },
+    { title: '7-Acre Master Layout', size: '7 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/godrej-woods-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
