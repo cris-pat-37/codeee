@@ -181,6 +181,11 @@ const normalizeProperty = (p) => ({
     { title: 'Type 1 — 4 BHK Villa Floor Plan (2,620 Sq.ft)', size: '2,620 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-fp-type1.jpg' },
     { title: 'Type 2 — 4 BHK Villa Floor Plan (3,200 Sq.ft)', size: '3,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-fp-type2.jpg' },
     { title: '4-Acre Villa Township Master Layout', size: '4 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-master-plan.jpg' }
+  ] : (p.slug === 'nbr-soul-of-the-seasons' || p.title === 'NBR Soul of the Seasons' || p.title === 'Soul of The Seasons') ? [
+    { title: '3 BHK East Facing Floor Plan (1,446 Sq.ft)', size: '1,446 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-1446.jpg' },
+    { title: '3 BHK Typical Unit Floor Plan (1,680 Sq.ft)', size: '1,680 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-1680.jpg' },
+    { title: 'Typical Tower Floor Plan', size: 'Tower Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-tower.jpg' },
+    { title: '9.6-Acre Master Layout', size: '9.6 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-master-plan.jpg' }
   ] : (p.slug === 'nvt-a-wonderful-world' || p.title === 'NVT A Wonderful World' || p.title === 'A Wonderful world Phase 1 Eterna') ? [
     { title: '4 BHK Eterna Villa Floor Plan (2,950 Sq.ft)', size: '2,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-fp-1.jpg' },
     { title: '100-Acre Master Township Layout', size: '100 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-master-plan.jpg' }
