@@ -148,6 +148,10 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'villa-feliz' || p.title === 'Villa Feliz' || p.title === 'Ruchira Villa Feliz') ? [
     { title: '4 BHK Luxury Villa Floor Plan (2,400 Sq.ft)', size: '2,400 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/villa-feliz-fp-1.jpg' },
     { title: '117-Villa Township Master Layout', size: '117 Villas Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/villa-feliz-fp-1.jpg' }
+  ] : (p.slug === 'sobha-madison' || p.title === 'Sobha Madison') ? [
+    { title: '3 BHK 2T Floor Plan + Home Office (1,347 Sq.ft)', size: '1,347 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-1.jpg' },
+    { title: '3 BHK 3T Floor Plan (1,514 Sq.ft)', size: '1,514 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-2.jpg' },
+    { title: '4 BHK 3T Grand Residence Floor Plan (1,847 Sq.ft)', size: '1,847 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-3.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
