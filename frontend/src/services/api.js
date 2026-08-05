@@ -157,6 +157,10 @@ const normalizeProperty = (p) => ({
     { title: '2 BHK NYC Apartment Floor Plan (1,180 Sq.ft)', size: '1,180 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-2.jpg' },
     { title: '3 BHK NYC Apartment Floor Plan (1,490 Sq.ft)', size: '1,490 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-3.jpg' },
     { title: '33-Acre NYC Township Master Layout', size: '33 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-4.jpg' }
+  ] : (p.slug === 'sobha-magnus' || p.title === 'Sobha Magnus') ? [
+    { title: '3 BHK Wing 1 Floor Plan (1,450 Sq.ft)', size: '1,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing1.jpg' },
+    { title: '3 BHK Wing 2 Floor Plan (1,750 Sq.ft)', size: '1,750 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing2.jpg' },
+    { title: '3.5-Acre Master Layout', size: '3.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
