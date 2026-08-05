@@ -77,6 +77,10 @@ const normalizeProperty = (p) => ({
     { title: '3.5 BHK Floor Plan (2,680 Sq.ft)', size: '2,680 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-fp-3-5bhk.jpg' },
     { title: '4.5 BHK Floor Plan (3,070 Sq.ft)', size: '3,070 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-fp-4-5bhk.jpg' },
     { title: '3.5-Acre Master Layout', size: '3.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-master-plan.jpg' }
+  ] : (p.slug === 'terra-alegria' || p.title === 'Terra Alegria') ? [
+    { title: '4 BHK Luxury Villa (2,650 Sq.ft)', size: '2,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' },
+    { title: '4 BHK Grand Villa (3,205 Sq.ft)', size: '3,205 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' },
+    { title: '13.5-Acre Villa Township Layout', size: '13.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/terra-alegria-fp-1.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
