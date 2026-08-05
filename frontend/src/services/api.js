@@ -121,6 +121,11 @@ const normalizeProperty = (p) => ({
     { title: '4 BHK Luxury Villa Floor Plan (3,387 Sq.ft)', size: '3,387 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-fp-4bhk.jpg' },
     { title: '4 BHK Detailed Villa Layout', size: 'Detailed Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-fp-4bhk-detailed.jpg' },
     { title: '26.5-Acre Master Layout', size: '26.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-master-plan.jpg' }
+  ] : (p.slug === 'sobha-hosakote' || p.title === 'Sobha Hosakote') ? [
+    { title: '1 BHK Floor Plan (650 Sq.ft)', size: '650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-1.png' },
+    { title: '2 BHK Floor Plan (1,200 Sq.ft)', size: '1,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-2.png' },
+    { title: '3 BHK Floor Plan (1,750 Sq.ft)', size: '1,750 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-3.png' },
+    { title: '300-Acre Integrated Township Layout', size: '300 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-4.png' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
