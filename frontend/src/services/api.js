@@ -68,6 +68,11 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'habulus-tranquility' || p.title === 'Habulus Tranquility') ? [
     { title: 'Master Typical Floor Plan', size: '1,200 - 1,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/habulus-tranquility-fp-1.jpg' },
     { title: '5-Acre Master Layout', size: '5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/habulus-tranquility-master-plan.jpg' }
+  ] : (p.slug === 'the-ascent' || p.title === 'The Ascent') ? [
+    { title: '2 BHK Floor Plan (1,295 Sq.ft)', size: '1,295 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-fp-2bhk.jpg' },
+    { title: '3 BHK Floor Plan (1,571 Sq.ft)', size: '1,571 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-fp-3bhk.jpg' },
+    { title: '3 BHK Grand Floor Plan (1,885 Sq.ft)', size: '1,885 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-fp-3bhk-grand.jpg' },
+    { title: '4-Acre Master Layout', size: '4 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
