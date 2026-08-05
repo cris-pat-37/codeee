@@ -195,6 +195,13 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'sowparnika-whispering-petals' || p.title === 'Sowparnika Whispering Petals' || p.title === 'Whispering Petals') ? [
     { title: '2 BHK Smart Luxury Floor Plan (1,036 Sq.ft)', size: '1,036 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-fp-1.jpg' },
     { title: '8.12-Acre High-Rise Master Layout', size: '8.12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-1.jpg' }
+  ] : (p.slug === 'purvankara-vajarahalli' || p.title === 'Purvankara Vajarahalli' || p.title === 'Purvankara Vajarahalli') ? [
+    { title: 'Unit Floor Plan (1,950 Sq.ft)', size: '1,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-vajarahalli-fp-unit.jpg' },
+    { title: 'Typical High-Rise Floor Plan', size: 'Typical Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-vajarahalli-fp-typical.jpg' },
+    { title: '3.6-Acre Master Layout', size: '3.6 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-vajarahalli-master-plan.jpg' }
+  ] : (p.slug === 'purva-sparkling-springs' || p.title === 'Purva Sparkling Springs') ? [
+    { title: 'Signature Villa Floor Plan (2,280 Sq.ft)', size: '2,280 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-sparkling-springs-fp-1.jpg' },
+    { title: 'Villa Master Layout Plan', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-sparkling-springs-master-plan.jpg' }
   ] : (p.slug === 'mana-cresta' || p.title === 'Mana Cresta') ? [
     { title: '3 BHK Large Floor Plan (1,657 Sq.ft)', size: '1,657 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
     { title: '3 BHK Comfort Floor Plan (1,488 Sq.ft)', size: '1,488 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
