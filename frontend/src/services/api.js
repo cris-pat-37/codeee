@@ -161,6 +161,12 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Wing 1 Floor Plan (1,450 Sq.ft)', size: '1,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing1.jpg' },
     { title: '3 BHK Wing 2 Floor Plan (1,750 Sq.ft)', size: '1,750 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing2.jpg' },
     { title: '3.5-Acre Master Layout', size: '3.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-master-plan.jpg' }
+  ] : (p.slug === 'tvs-emerald-altura' || p.title === 'TVS Emerald Altura' || p.title === 'Altura') ? [
+    { title: '2 BHK Floor Plan (1,100 Sq.ft)', size: '1,100 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-2bhk.jpg' },
+    { title: '3 BHK Floor Plan (1,510 Sq.ft)', size: '1,510 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-3bhk.jpg' },
+    { title: '10.06-Acre Township Master Layout', size: '10.06 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-master-plan.jpg' }
+  ] : (p.slug === 'tvs-emerald-auralis' || p.title === 'TVS Emerald Auralis') ? [
+    { title: '3.71-Acre Township Master Layout', size: '3.71 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-auralis-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
