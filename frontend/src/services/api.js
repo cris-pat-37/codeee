@@ -117,6 +117,10 @@ const normalizeProperty = (p) => ({
     { title: '4 BHK Type 1 Floor Plan (2,850 Sq.ft)', size: '2,850 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/madhura-gardens-fp-type1.jpg' },
     { title: '4 BHK Type 2 Floor Plan (3,250 Sq.ft)', size: '3,250 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/madhura-gardens-fp-type2.jpg' },
     { title: '6-Acre Phase 1 Master Layout', size: '6 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/madhura-gardens-master-plan.jpg' }
+  ] : (p.slug === 'soulace' || p.title === 'Soulace') ? [
+    { title: '4 BHK Luxury Villa Floor Plan (3,387 Sq.ft)', size: '3,387 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-fp-4bhk.jpg' },
+    { title: '4 BHK Detailed Villa Layout', size: 'Detailed Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-fp-4bhk-detailed.jpg' },
+    { title: '26.5-Acre Master Layout', size: '26.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/soulace-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
