@@ -309,7 +309,7 @@ export default function Home() {
       pStatus.toLowerCase().includes(projectStatus.toLowerCase());
 
     return matchesKeyword && matchesId && matchesLocation && matchesType && matchesStatus;
-  });
+  }).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
 
   // Get featured properties for the Swiper slider
   const featuredProperties = properties.filter(p => p.featured) || [];
