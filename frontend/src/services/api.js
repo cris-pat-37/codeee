@@ -186,6 +186,15 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Typical Unit Floor Plan (1,680 Sq.ft)', size: '1,680 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-1680.jpg' },
     { title: 'Typical Tower Floor Plan', size: 'Tower Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-tower.jpg' },
     { title: '9.6-Acre Master Layout', size: '9.6 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-master-plan.jpg' }
+  ] : (p.slug === 'sowparnika-life-on-the-green' || p.title === 'Sowparnika Life on the Green' || p.title === 'Life on the Green') ? [
+    { title: '5 BHK Independent Villa Floor Plan (2,136 Sq.ft)', size: '2,136 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-life-on-green-fp-1.jpg' },
+    { title: '8.3-Acre Villa Township Master Layout', size: '8.3 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-life-on-green-1.jpg' }
+  ] : (p.slug === 'sowparnika-rhythm-of-rain' || p.title === 'Sowparnika Rhythm of Rain') ? [
+    { title: '2 BHK Unit Floor Plan (940 Sq.ft)', size: '940 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-rhythm-of-rain-fp-1.jpg' },
+    { title: '6.75-Acre High-Rise Master Layout', size: '6.75 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-rhythm-of-rain-5.jpg' }
+  ] : (p.slug === 'sowparnika-whispering-petals' || p.title === 'Sowparnika Whispering Petals' || p.title === 'Whispering Petals') ? [
+    { title: '2 BHK Smart Luxury Floor Plan (1,036 Sq.ft)', size: '1,036 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-fp-1.jpg' },
+    { title: '8.12-Acre High-Rise Master Layout', size: '8.12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-1.jpg' }
   ] : (p.slug === 'mana-verdant-terraces' || p.title === 'Mana Verdant Terraces' || p.title === 'Verdant Terraces') ? [
     { title: '3 BHK Stepped Terrace Floor Plan (1,850 Sq.ft)', size: '1,850 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-1.jpg' },
     { title: '4 BHK Stepped Terrace Floor Plan (2,450 Sq.ft)', size: '2,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-2.jpg' },
