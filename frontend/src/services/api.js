@@ -126,6 +126,10 @@ const normalizeProperty = (p) => ({
     { title: '2 BHK Floor Plan (1,200 Sq.ft)', size: '1,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-2.png' },
     { title: '3 BHK Floor Plan (1,750 Sq.ft)', size: '1,750 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-3.png' },
     { title: '300-Acre Integrated Township Layout', size: '300 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-hosakote-4.png' }
+  ] : (p.slug === 'poulomi-florique' || p.title === 'Poulomi Florique' || p.title === 'Peace of mind - Florique') ? [
+    { title: '3 BHK Floor Plan (Alpine & Dew Drop)', size: '1,585 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/florique-fp-alpine.jpg' },
+    { title: '3.5 BHK Floor Plan (Blossom & Cascade)', size: '2,210 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/florique-fp-blossom.jpg' },
+    { title: '9-Acre Master Layout', size: '9 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/florique-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
