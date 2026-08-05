@@ -152,6 +152,11 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK 2T Floor Plan + Home Office (1,347 Sq.ft)', size: '1,347 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-1.jpg' },
     { title: '3 BHK 3T Floor Plan (1,514 Sq.ft)', size: '1,514 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-2.jpg' },
     { title: '4 BHK 3T Grand Residence Floor Plan (1,847 Sq.ft)', size: '1,847 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-madison-fp-3.jpg' }
+  ] : (p.slug === 'sobha-nyc-ikon' || p.title === 'Sobha NYC Ikon') ? [
+    { title: '1 BHK NYC Studio Floor Plan (650 Sq.ft)', size: '650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-1.jpg' },
+    { title: '2 BHK NYC Apartment Floor Plan (1,180 Sq.ft)', size: '1,180 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-2.jpg' },
+    { title: '3 BHK NYC Apartment Floor Plan (1,490 Sq.ft)', size: '1,490 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-3.jpg' },
+    { title: '33-Acre NYC Township Master Layout', size: '33 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nyc-ikon-4.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
