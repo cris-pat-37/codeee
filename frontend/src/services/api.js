@@ -186,6 +186,20 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Typical Unit Floor Plan (1,680 Sq.ft)', size: '1,680 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-1680.jpg' },
     { title: 'Typical Tower Floor Plan', size: 'Tower Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-fp-tower.jpg' },
     { title: '9.6-Acre Master Layout', size: '9.6 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nbr-soul-of-seasons-master-plan.jpg' }
+  ] : (p.slug === 'mana-verdant-terraces' || p.title === 'Mana Verdant Terraces' || p.title === 'Verdant Terraces') ? [
+    { title: '3 BHK Stepped Terrace Floor Plan (1,850 Sq.ft)', size: '1,850 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-1.jpg' },
+    { title: '4 BHK Stepped Terrace Floor Plan (2,450 Sq.ft)', size: '2,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-2.jpg' },
+    { title: '8-Acre Green Township Master Layout', size: '8 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-3.jpg' }
+  ] : (p.slug === 'mana-skanda-the-right-life' || p.title === 'Mana Skanda The Right Life' || p.title === 'The Right Life') ? [
+    { title: '100-Acre Master Township Layout', size: '100 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-the-right-life-master-plan.jpg' },
+    { title: '31-Acre Phase 1 Master Plan', size: '31 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-the-right-life-1.jpg' }
+  ] : (p.slug === 'mana-vista' || p.title === 'Mana Vista') ? [
+    { title: '2.5 BHK Unbound Luxury Floor Plan (1,280 Sq.ft)', size: '1,280 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-vista-1.jpg' },
+    { title: '3 BHK Unbound Luxury Floor Plan (1,590 Sq.ft)', size: '1,590 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-vista-2.jpg' }
+  ] : (p.slug === 'mana-jardin-neo' || p.title === 'Mana Jardin Neo') ? [
+    { title: 'Eco-Luxury Master Plan Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-jardin-neo-master-plan.jpg' }
+  ] : (p.slug === 'mana-dale' || p.title === 'Mana Dale') ? [
+    { title: '3 BHK Premium Floor Plan (1,580 Sq.ft)', size: '1,580 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-1.jpg' }
   ] : (p.slug === 'nvt-a-wonderful-world' || p.title === 'NVT A Wonderful World' || p.title === 'A Wonderful world Phase 1 Eterna') ? [
     { title: '4 BHK Eterna Villa Floor Plan (2,950 Sq.ft)', size: '2,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-fp-1.jpg' },
     { title: '100-Acre Master Township Layout', size: '100 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-master-plan.jpg' }
