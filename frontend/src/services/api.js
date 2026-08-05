@@ -62,6 +62,9 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Floor Plan', size: '1,900 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-fp-3bhk.jpg' },
     { title: '4 BHK Floor Plan', size: '2,500 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-fp-4bhk.jpg' },
     { title: '80-Acre Master Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mizumi-reserve-master-plan.jpg' }
+  ] : (p.slug === 'everfine-straatosphere' || p.title === 'Everfine Straatosphere') ? [
+    { title: '4 BHK Sky Villa (3,411 Sq.ft)', size: '3,411 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/everfine-fp-4bhk-north.jpg' },
+    { title: '4 BHK Grand Sky Villa (3,456 Sq.ft)', size: '3,456 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/everfine-fp-4bhk-east.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
