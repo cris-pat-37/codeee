@@ -195,6 +195,10 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'sowparnika-whispering-petals' || p.title === 'Sowparnika Whispering Petals' || p.title === 'Whispering Petals') ? [
     { title: '2 BHK Smart Luxury Floor Plan (1,036 Sq.ft)', size: '1,036 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-fp-1.jpg' },
     { title: '8.12-Acre High-Rise Master Layout', size: '8.12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-1.jpg' }
+  ] : (p.slug === 'ruchira-villa-feliz' || p.title === 'Ruchira Villa Feliz' || p.title === 'Villa Feliz') ? [
+    { title: 'Type A — 4 BHK Spanish Villa Floor Plan with Lift (3,667 Sq.ft)', size: '3,667 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ruchira-villa-feliz-fp-type-a.jpg' },
+    { title: 'Type B — 4 BHK Grand Spanish Villa Floor Plan with Lift (4,090 Sq.ft)', size: '4,090 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ruchira-villa-feliz-fp-type-b.jpg' },
+    { title: '10-Acre Spanish Villa Township Master Layout', size: '10 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ruchira-villa-feliz-master-plan.jpg' }
   ] : (p.slug === 'purvankara-vajarahalli' || p.title === 'Purvankara Vajarahalli' || p.title === 'Purvankara Vajarahalli') ? [
     { title: 'Unit Floor Plan (1,950 Sq.ft)', size: '1,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-vajarahalli-fp-unit.jpg' },
     { title: 'Typical High-Rise Floor Plan', size: 'Typical Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-vajarahalli-fp-typical.jpg' },
