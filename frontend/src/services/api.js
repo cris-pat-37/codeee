@@ -141,6 +141,10 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'merusri-antelopes' || p.title === 'Merusri Antelopes') ? [
     { title: '4 BHK Villa Floor Plan', size: '3,150 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-antelopes-fp-1.png' },
     { title: 'Gated Villa Township Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-antelopes-fp-1.png' }
+  ] : (p.slug === 'montecito-villas' || p.title === 'Montecito Villas') ? [
+    { title: '4 BHK Type A1 Tuscan Floor Plan (4,200 Sq.ft)', size: '4,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/montecito-villas-fp-a1.jpg' },
+    { title: '5 BHK Type C Spanish Floor Plan (5,800 Sq.ft)', size: '5,800 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/montecito-villas-fp-c.jpg' },
+    { title: '28-Acre Master Layout', size: '28 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/montecito-villas-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
