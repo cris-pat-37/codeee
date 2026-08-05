@@ -101,6 +101,10 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Luxe Floor Plan (Tower 5)', size: '2,000 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t5.jpg' },
     { title: '3.5 BHK Luxury Floor Plan (Tower 6)', size: '2,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t6.jpg' },
     { title: 'Tower 7 Floor Plan', size: 'Typical Floor Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t7.jpg' }
+  ] : (p.slug === 'eco-city-villas' || p.title === 'Eco City Villas') ? [
+    { title: '3 BHK Villa Floor Plan', size: '2,100 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/eco-city-villas-1.png' },
+    { title: '4 BHK Villa Floor Plan', size: '2,800 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/eco-city-villas-2.png' },
+    { title: '48-Acre Villa Township Layout', size: '48 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/eco-city-villas-1.png' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
