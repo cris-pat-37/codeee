@@ -289,6 +289,7 @@ export const api = {
         !String(p.title || '').includes('Archived') &&
         !String(p.title || '').includes('DELETED')
       ).map(normalizeProperty);
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
       return { data: filtered };
     } catch (error) {
       console.error(`Error fetching all properties: ${error.message}`);

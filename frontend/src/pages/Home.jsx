@@ -155,6 +155,7 @@ export default function Home() {
         // Normalize results
         const rawProperties = res.data || [];
         const normalized = rawProperties.map(p => p.attributes ? { id: p.id, ...p.attributes } : p);
+        normalized.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
         
         setProperties(normalized);
         setLoading(false);
