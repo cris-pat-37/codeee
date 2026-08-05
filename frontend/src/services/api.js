@@ -279,7 +279,7 @@ export const api = {
         params: {
           select: '*',
           status: 'neq.DELETED',
-          order: 'featured.desc,created_at.desc'
+          order: 'title.asc'
         }
       });
       // Filter out archived properties and normalize
