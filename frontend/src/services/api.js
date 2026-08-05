@@ -22,8 +22,27 @@ const backendClient = axios.create({
   timeout: 10000,
 });
 
+const NO_IMAGE_PROPERTIES = [
+  '81 degree', 'alure avanai', 'allure', 'amberstone', 'attavi', 'birla evara', 'bricks',
+  'brigade blevedere', 'carpediem', 'carpe diem', 'courtyard vedanta', 'daintree', 'ecocity',
+  'eco city', 'ekara celesta', 'heart of harmony', 'kranthi enclave', 'lodha mirabelle',
+  'mana cresta', 'mana dale', 'mana jardin neo', 'mana luxe verdant', 'mana skanda',
+  'mana verdant', 'mana vista', 'mea and meadows', 'mea & meadows', 'mizumi reserve',
+  'nvt a wonderful world', 'park terrace', 'parth gardenia', 'pavani mirabillia',
+  'pavani mirabilia', 'pavani mirai', 'purvankara vajarahalli', 'pushkalam heritage',
+  'silver sky', 'silvery sky', 'sobha hosakote', 'sobha nyc ikon', 'soulace',
+  'sowparnika life on the green', 'life on the green', 'synergy', 'terra vista row villas',
+  'the ivory terraces', 'ivory terraces', 'whispering waves'
+];
+
 // Normalize Supabase snake_case fields to camelCase for frontend components
-const normalizeProperty = (p) => ({
+const normalizeProperty = (p) => {
+  const isNoImage = NO_IMAGE_PROPERTIES.some(t =>
+    (p.title || '').toLowerCase().includes(t) ||
+    (p.slug || '').toLowerCase().includes(t)
+  );
+
+  const res = {
   ...p,
   // Map snake_case DB fields to camelCase frontend fields
   propertyType: p.property_type || p.propertyType || '',
@@ -36,13 +55,13 @@ const normalizeProperty = (p) => ({
   longDescription: p.description || p.longDescription || '',
   projectStatus: p.status === 'For Sale' ? 'Under Construction' : (p.projectStatus || p.status || ''),
   possessionDate: p.completion_date || p.possessionDate || '',
-  mainImageUrl: p.image_url || p.mainImageUrl || '',
-  image_url: p.image_url || '',
-  gallery: p.gallery || [],
-  galleryImageUrls: p.gallery || [],
+  mainImageUrl: isNoImage ? '' : (p.image_url || p.mainImageUrl || ''),
+  image_url: isNoImage ? '' : (p.image_url || ''),
+  gallery: isNoImage ? [] : (p.gallery || []),
+  galleryImageUrls: isNoImage ? [] : (p.gallery || []),
   brochureUrl: p.brochure_url || p.brochureUrl || '',
   youtubeVideo: p.video_url || p.youtubeVideo || '',
-  floorPlanUrl: p.floor_plan_url || p.floorPlanUrl || '',
+  floorPlanUrl: isNoImage ? '' : (p.floor_plan_url || p.floorPlanUrl || ''),
   floorPlans: (p.slug === 'ajmeera-marina' || p.title === 'Ajmeera Marina') ? [
     { title: '2 BHK Floor Plan', size: '1,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-2bhk.jpg' },
     { title: '3 BHK Series 1 (West Facing)', size: '1,600 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/ajmeera-marina-fp-3bhk-west.jpg' },
@@ -261,15 +280,21 @@ const normalizeProperty = (p) => ({
           image: v.image || v.floor_plan_url || ''
         }))
       : (p.floor_plan_url ? [{ title: 'Master Floor Plan', size: p.area_display || '', image: p.floor_plan_url }] : []),
-  configuration: p.configuration || '',
-  furnishing: p.furnishing || '',
-  parking: p.parking || '',
-  amenities: p.amenities || [],
-  variants: p.variants || [],
-  agentName: p.agent_name || p.agentName || '',
-  agentPhone: p.agent_phone || p.agentPhone || '',
-  agentEmail: p.agent_email || p.agentEmail || '',
-});
+    configuration: p.configuration || '',
+    furnishing: p.furnishing || '',
+    parking: p.parking || '',
+    amenities: p.amenities || [],
+    variants: p.variants || [],
+    agentName: p.agent_name || p.agentName || '',
+    agentPhone: p.agent_phone || p.agentPhone || '',
+    agentEmail: p.agent_email || p.agentEmail || '',
+  };
+
+  if (isNoImage) {
+    res.floorPlans = [];
+  }
+  return res;
+};
 
 export const api = {
   // Fetch all active properties from Supabase
