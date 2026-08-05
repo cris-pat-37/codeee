@@ -177,6 +177,10 @@ const normalizeProperty = (p) => ({
     { title: 'KIADB Aerospace Park Master Layout', size: 'Aerospace Park', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-northern-lights-master-plan.jpg' }
   ] : (p.slug === 'subha-white-waters' || p.title === 'Subha White Waters') ? [
     { title: '120-Acre Lakefront Farmhouse Master Layout', size: '120 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/subha-white-waters-master-plan.jpg' }
+  ] : (p.slug === 'tattvam-villas' || p.title === 'Tattvam Villas' || p.title === 'Tattvam') ? [
+    { title: 'Type 1 — 4 BHK Villa Floor Plan (2,620 Sq.ft)', size: '2,620 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-fp-type1.jpg' },
+    { title: 'Type 2 — 4 BHK Villa Floor Plan (3,200 Sq.ft)', size: '3,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-fp-type2.jpg' },
+    { title: '4-Acre Villa Township Master Layout', size: '4 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tattvam-master-plan.jpg' }
   ] : (p.slug === 'nvt-a-wonderful-world' || p.title === 'NVT A Wonderful World' || p.title === 'A Wonderful world Phase 1 Eterna') ? [
     { title: '4 BHK Eterna Villa Floor Plan (2,950 Sq.ft)', size: '2,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-fp-1.jpg' },
     { title: '100-Acre Master Township Layout', size: '100 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-master-plan.jpg' }
