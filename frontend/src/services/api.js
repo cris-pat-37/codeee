@@ -134,6 +134,13 @@ const normalizeProperty = (p) => ({
     { title: '2 BHK Floor Plan (1,225 Sq.ft)', size: '1,225 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/pm-gardens-fp-2bhk.jpg' },
     { title: '3 BHK Floor Plan (1,575 Sq.ft)', size: '1,575 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/pm-gardens-fp-3bhk.jpg' },
     { title: '1-Acre Master Layout', size: '1 Acre', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/pm-gardens-master-plan.jpg' }
+  ] : (p.slug === 'merusri-sunscape' || p.title === 'Merusri Sunscape') ? [
+    { title: '3 BHK Row Villa Floor Plan (2,410 Sq.ft)', size: '2,410 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-sunscape-fp-type1.jpg' },
+    { title: '4 BHK Row Villa Floor Plan (3,676 Sq.ft)', size: '3,676 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-sunscape-fp-type2.jpg' },
+    { title: '5.39-Acre Villa Layout', size: '5.39 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-sunscape-master-plan.jpg' }
+  ] : (p.slug === 'merusri-antelopes' || p.title === 'Merusri Antelopes') ? [
+    { title: '4 BHK Villa Floor Plan', size: '3,150 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-antelopes-fp-1.png' },
+    { title: 'Gated Villa Township Layout', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/merusri-antelopes-fp-1.png' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
