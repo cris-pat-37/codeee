@@ -170,6 +170,11 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'sobha-neopolis' || p.title === 'Sobha Neopolis') ? [
     { title: '3 BHK + Domestic Help Room (1,915 Sq.ft)', size: '1,915 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-neopolis-fp-3bhk.jpg' },
     { title: '25-Acre Greek Township Master Layout', size: '25 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-neopolis-master-plan.jpg' }
+  ] : (p.slug === 'purva-northern-lights' || p.title === 'Purva Northern Lights' || p.title === 'Purva Northernlights') ? [
+    { title: '2 BHK Floor Plan (1,250 Sq.ft)', size: '1,250 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-northern-lights-fp-2bhk.jpg' },
+    { title: '3 BHK Floor Plan (1,764 Sq.ft)', size: '1,764 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-northern-lights-fp-3bhk.jpg' },
+    { title: '4 BHK Duplex Floor Plan (2,450 Sq.ft)', size: '2,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-northern-lights-fp-4bhk-duplex.jpg' },
+    { title: 'KIADB Aerospace Park Master Layout', size: 'Aerospace Park', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-northern-lights-master-plan.jpg' }
   ] : (p.slug === 'subha-white-waters' || p.title === 'Subha White Waters') ? [
     { title: '120-Acre Lakefront Farmhouse Master Layout', size: '120 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/subha-white-waters-master-plan.jpg' }
   ] : (p.slug === 'nvt-a-wonderful-world' || p.title === 'NVT A Wonderful World' || p.title === 'A Wonderful world Phase 1 Eterna') ? [
