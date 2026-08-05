@@ -97,9 +97,10 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Floor Plan', size: '1,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-fp-3bhk.jpg' },
     { title: '3.5 BHK + Study Floor Plan', size: '1,650 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-fp-3bhk-study.jpg' },
     { title: '12-Acre Master Layout', size: '12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/hevan-master-plan.jpg' }
-  ] : (p.slug === 'lodha-mirabelle' || p.title === 'Lodha Mirabelle') ? [
-    { title: '3 BHK Luxe Floor Plan (Dual Sundecks)', size: '2,000 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-3bhk.jpg' },
-    { title: '3.5 BHK Floor Plan', size: '2,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-4bhk.jpg' }
+  ] : (p.slug === 'lodha-mirabelle' || p.title === 'Lodha Mirabelle' || p.title === 'Lodha Mirabelle Phase 2') ? [
+    { title: '3 BHK Luxe Floor Plan (Tower 5)', size: '2,000 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t5.jpg' },
+    { title: '3.5 BHK Luxury Floor Plan (Tower 6)', size: '2,200 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t6.jpg' },
+    { title: 'Tower 7 Floor Plan', size: 'Typical Floor Layout', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/lodha-mirabelle-fp-t7.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
