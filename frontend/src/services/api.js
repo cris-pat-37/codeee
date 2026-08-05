@@ -195,6 +195,10 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'sowparnika-whispering-petals' || p.title === 'Sowparnika Whispering Petals' || p.title === 'Whispering Petals') ? [
     { title: '2 BHK Smart Luxury Floor Plan (1,036 Sq.ft)', size: '1,036 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-fp-1.jpg' },
     { title: '8.12-Acre High-Rise Master Layout', size: '8.12 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sowparnika-whispering-petals-1.jpg' }
+  ] : (p.slug === 'mana-cresta' || p.title === 'Mana Cresta') ? [
+    { title: '3 BHK Large Floor Plan (1,657 Sq.ft)', size: '1,657 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
+    { title: '3 BHK Comfort Floor Plan (1,488 Sq.ft)', size: '1,488 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
+    { title: '2.5 BHK Floor Plan (1,354 Sq.ft)', size: '1,354 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' }
   ] : (p.slug === 'mana-verdant-terraces' || p.title === 'Mana Verdant Terraces' || p.title === 'Verdant Terraces') ? [
     { title: '3 BHK Stepped Terrace Floor Plan (1,850 Sq.ft)', size: '1,850 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-1.jpg' },
     { title: '4 BHK Stepped Terrace Floor Plan (2,450 Sq.ft)', size: '2,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-verdant-terraces-2.jpg' },
