@@ -172,6 +172,17 @@ const normalizeProperty = (p) => ({
     { title: '25-Acre Greek Township Master Layout', size: '25 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-neopolis-master-plan.jpg' }
   ] : (p.slug === 'subha-white-waters' || p.title === 'Subha White Waters') ? [
     { title: '120-Acre Lakefront Farmhouse Master Layout', size: '120 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/subha-white-waters-master-plan.jpg' }
+  ] : (p.slug === 'nvt-a-wonderful-world' || p.title === 'NVT A Wonderful World' || p.title === 'A Wonderful world Phase 1 Eterna') ? [
+    { title: '4 BHK Eterna Villa Floor Plan (2,950 Sq.ft)', size: '2,950 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-fp-1.jpg' },
+    { title: '100-Acre Master Township Layout', size: '100 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-wonderful-world-master-plan.jpg' }
+  ] : (p.slug === 'nvt-symphony-of-orchards' || p.title === 'NVT Symphony of Orchards') ? [
+    { title: 'Lemon Type 4 BHK Villa Floor Plan (2,930 Sq.ft)', size: '2,930 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-soo-fp-lemon.jpg' },
+    { title: 'Mango Type 4 BHK Villa Floor Plan (3,530 Sq.ft)', size: '3,530 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-soo-fp-mango.jpg' },
+    { title: '18-Acre Fruit Orchard Master Layout', size: '18 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-soo-master-plan.jpg' }
+  ] : (p.slug === 'nvt-under-the-open-sky' || p.title === 'NVT Under The Open Sky' || p.title === 'Under The Open Sky') ? [
+    { title: 'Aurora Type 4 BHK Villa Floor Plan (2,980 Sq.ft)', size: '2,980 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-utos-fp-aurora.jpg' },
+    { title: 'Breeze Type 4 BHK Villa Floor Plan (3,450 Sq.ft)', size: '3,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-utos-fp-breeze.jpg' },
+    { title: '16-Acre Villa Community Master Layout', size: '16 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/nvt-utos-master-plan.jpg' }
   ] : (p.slug === 'tvs-emerald-altura' || p.title === 'TVS Emerald Altura' || p.title === 'Altura') ? [
     { title: '2 BHK Floor Plan (1,100 Sq.ft)', size: '1,100 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-2bhk.jpg' },
     { title: '3 BHK Floor Plan (1,510 Sq.ft)', size: '1,510 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-3bhk.jpg' },
