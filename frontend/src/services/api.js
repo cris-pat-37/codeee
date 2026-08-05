@@ -170,6 +170,8 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'sobha-neopolis' || p.title === 'Sobha Neopolis') ? [
     { title: '3 BHK + Domestic Help Room (1,915 Sq.ft)', size: '1,915 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-neopolis-fp-3bhk.jpg' },
     { title: '25-Acre Greek Township Master Layout', size: '25 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-neopolis-master-plan.jpg' }
+  ] : (p.slug === 'subha-white-waters' || p.title === 'Subha White Waters') ? [
+    { title: '120-Acre Lakefront Farmhouse Master Layout', size: '120 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/subha-white-waters-master-plan.jpg' }
   ] : (p.slug === 'tvs-emerald-altura' || p.title === 'TVS Emerald Altura' || p.title === 'Altura') ? [
     { title: '2 BHK Floor Plan (1,100 Sq.ft)', size: '1,100 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-2bhk.jpg' },
     { title: '3 BHK Floor Plan (1,510 Sq.ft)', size: '1,510 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-3bhk.jpg' },
