@@ -73,6 +73,10 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Floor Plan (1,571 Sq.ft)', size: '1,571 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-fp-3bhk.jpg' },
     { title: '3 BHK Grand Floor Plan (1,885 Sq.ft)', size: '1,885 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-fp-3bhk-grand.jpg' },
     { title: '4-Acre Master Layout', size: '4 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/the-ascent-master-plan.jpg' }
+  ] : (p.slug === 'kumar-plumeria' || p.title === 'Kumar Plumeria' || p.title === 'Plumeria') ? [
+    { title: '3.5 BHK Floor Plan (2,680 Sq.ft)', size: '2,680 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-fp-3-5bhk.jpg' },
+    { title: '4.5 BHK Floor Plan (3,070 Sq.ft)', size: '3,070 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-fp-4-5bhk.jpg' },
+    { title: '3.5-Acre Master Layout', size: '3.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/kumar-plumeria-master-plan.jpg' }
   ] : (p.floor_plans && p.floor_plans.length > 0)
     ? p.floor_plans
     : (p.variants && p.variants.length > 0 && p.variants.some(v => v.image || v.floor_plan_url))
