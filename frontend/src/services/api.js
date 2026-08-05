@@ -206,6 +206,13 @@ const normalizeProperty = (p) => ({
   ] : (p.slug === 'purva-sparkling-springs' || p.title === 'Purva Sparkling Springs') ? [
     { title: 'Signature Villa Floor Plan (2,280 Sq.ft)', size: '2,280 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-sparkling-springs-fp-1.jpg' },
     { title: 'Villa Master Layout Plan', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/purva-sparkling-springs-master-plan.jpg' }
+  ] : (p.slug === 'mana-vista' || p.title === 'Mana Vista') ? [
+    { title: 'Front Elevation Day View', size: 'Elevation View', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-vista-1.jpg' },
+    { title: 'Infinity Pool & Clubhouse', size: 'Amenities', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-vista-3.jpg' },
+    { title: 'Central Landscape & Gardens', size: 'Landscape', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-vista-5.jpg' }
+  ] : (p.slug === 'mana-skanda-the-right-life' || p.title === 'Mana Skanda The Right Life' || p.title === 'The Right Life') ? [
+    { title: '3.5 BHK East Facing Unit Floor Plan (2,153 Sq.ft)', size: '2,153 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-the-right-life-fp-35bhk.jpg' },
+    { title: 'High-Rise Master Layout Plan', size: 'Master Plan', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-the-right-life-master-plan.jpg' }
   ] : (p.slug === 'mana-cresta' || p.title === 'Mana Cresta') ? [
     { title: '3 BHK Large Floor Plan (1,657 Sq.ft)', size: '1,657 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
     { title: '3 BHK Comfort Floor Plan (1,488 Sq.ft)', size: '1,488 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/mana-cresta-fp-1.jpg' },
