@@ -32,7 +32,7 @@ const NO_IMAGE_PROPERTIES = [
   'pavani mirabilia', 'pavani mirai', 'purvankara vajarahalli', 'pushkalam heritage',
   'silver sky', 'silvery sky', 'sobha hosakote', 'sobha nyc ikon', 'soulace',
   'sowparnika life on the green', 'life on the green', 'synergy', 'terra vista row villas',
-  'the ivory terraces', 'ivory terraces', 'whispering waves'
+  'the ivory terraces', 'ivory terraces', 'whispering waves', 'bannerghatta'
 ];
 
 // Normalize Supabase snake_case fields to camelCase for frontend components
