@@ -161,6 +161,12 @@ const normalizeProperty = (p) => ({
     { title: '3 BHK Wing 1 Floor Plan (1,450 Sq.ft)', size: '1,450 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing1.jpg' },
     { title: '3 BHK Wing 2 Floor Plan (1,750 Sq.ft)', size: '1,750 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-fp-wing2.jpg' },
     { title: '3.5-Acre Master Layout', size: '3.5 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-magnus-master-plan.jpg' }
+  ] : (p.slug === 'sobha-infinia' || p.title === 'Sobha Infinia') ? [
+    { title: '3 BHK Floor Plan (1,768 Sq.ft)', size: '1,768 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-infinia-fp-3bhk-1950.jpg' },
+    { title: '3 BHK + Domestic Help Room (2,187 Sq.ft)', size: '2,187 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-infinia-fp-3bhk-2198.jpg' },
+    { title: '4 BHK Floor Plan (2,225 Sq.ft)', size: '2,225 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-infinia-fp-4bhk-2613.jpg' },
+    { title: '4 BHK + Domestic Help Room (2,327 Sq.ft)', size: '2,327 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-infinia-fp-4bhk-3264.jpg' },
+    { title: '4.708-Acre Master Layout', size: '4.708 Acres', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/sobha-infinia-master-plan.jpg' }
   ] : (p.slug === 'tvs-emerald-altura' || p.title === 'TVS Emerald Altura' || p.title === 'Altura') ? [
     { title: '2 BHK Floor Plan (1,100 Sq.ft)', size: '1,100 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-2bhk.jpg' },
     { title: '3 BHK Floor Plan (1,510 Sq.ft)', size: '1,510 Sq.ft', image: 'https://raw.githubusercontent.com/cris-pat-37/codeee/main/frontend/public/uploads/tvs-altura-fp-3bhk.jpg' },
